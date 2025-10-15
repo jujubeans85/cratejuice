@@ -1,4 +1,6 @@
-/v3
+[build]
+  publish = "v3/frontend"
+  command = ""/v3
    /frontend
       index.html
       style.css
