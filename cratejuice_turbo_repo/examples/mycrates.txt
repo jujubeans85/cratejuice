@@ -1,1 +1,21 @@
-# add playlist URLs here
+echo "https://www.youtu playlist URLs here
+echo "https://www.youtube.com/watch?v=dQw4w9WgXcQ" > examples/mycrates.txt
+echo "https://www.youtube.com/watch?v=dQw4w9WgXcQ" > examples/mycrates.txt
+chmod +x crate_run.sh
+./crate_run.sh examples/mycrates.txt chill stabilize 0.5
+# 1) Make sure script can run
+chmod +x crate_run.sh
+
+# 2) Use a workspace-visible output folder in Codespaces
+export CRATE_DIR=/workspaces/cratejuice/offgrid-crates
+mkdir -p "$CRATE_DIR"
+
+# 3) Ensure examples exist + seed a test list (add your own later)
+mkdir -p examples
+echo "https://www.youtube.com/watch?v=dQw4w9WgXcQ" > examples/mycrates.txt
+
+# 4) Run the full chain (mood params included)
+./crate_run.sh examples/mycrates.txt chill stabilize 0.5
+chmod +
+ crate_run.sh
+ 
