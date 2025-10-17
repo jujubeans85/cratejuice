@@ -1,0 +1,30 @@
+{
+  "playlist_id": 8,
+  "title": "CrateJuice v0",
+  "description": "An awesome collection of tracks",
+  "tracks": [
+    {
+      "id": 1,
+      "title": "Never Gonna Give You Up",
+      "artist": "Rick Astley",
+      "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "duration": "3:32"
+    },
+    {
+      "id": 2,
+      "title": "Sample Track 2",
+      "artist": "Artist Name",
+      "url": "https://www.youtube.com/watch?v=example2",
+      "duration": "4:15"
+    },
+    {
+      "id": 3,
+      "title": "Sample Track 3",
+      "artist": "Another Artist",
+      "url": "https://www.youtube.com/watch?v=example3",
+      "duration": "3:45"
+    }
+  ],
+  "created_date": "2025-10-17",
+  "genre": "Mix"
+}
