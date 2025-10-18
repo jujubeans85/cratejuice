@@ -1,0 +1,3 @@
+# Add URLs to rip here, one per line
+# Example:
+# https://www.youtube.com/watch?v=dQw4w9WgXcQ
