@@ -1,12 +1,3 @@
 {
-  "tracks": {
-    "demo1": {
-      "id": "demo1",
-      "title": "Demo – Never",
-      "artist": "CJ System",
-      "file": "../../offgrid-crates/demo.mp3",
-      "cover": "../public/cover_default.png",
-      "duration": 210
-    }
-  }
+  "tracks": {}
 }
