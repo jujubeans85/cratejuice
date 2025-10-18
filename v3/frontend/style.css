@@ -124,12 +124,51 @@ h3 {
     transform: scale(0.98);
 }
 
+.btn-secondary {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1em;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 20px 0;
+}
+
+.btn-secondary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(86, 171, 47, 0.4);
+}
+
+.btn-secondary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
 #message {
     margin-top: 20px;
     font-size: 1.2em;
     color: #667eea;
     font-weight: bold;
     min-height: 30px;
+}
+
+.download {
+    text-align: center;
+    padding: 40px;
+    background: #e8f5e9;
+    border-radius: 8px;
+}
+
+.download p {
+    color: #666;
+    margin-bottom: 10px;
 }
 
 footer {

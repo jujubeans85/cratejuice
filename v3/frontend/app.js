@@ -52,4 +52,30 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.background = '#f8f9fa';
         });
     });
+    
+    // Download bundle functionality
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.addEventListener('click', function() {
+        // Change button text to show loading state
+        const originalText = downloadBtn.textContent;
+        downloadBtn.textContent = '⏳ Preparing download...';
+        downloadBtn.disabled = true;
+        
+        // Trigger download
+        const apiUrl = 'http://localhost:5000/api/download/bundle';
+        
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = apiUrl;
+        link.download = 'cratejuice-v3.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Reset button after a delay
+        setTimeout(() => {
+            downloadBtn.textContent = originalText;
+            downloadBtn.disabled = false;
+        }, 2000);
+    });
 });
