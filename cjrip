@@ -1,0 +1,4 @@
+#!/bin/bash
+# CrateJuice Ripper - Quick launcher for overnight ripper
+cd "$(dirname "$0")/cratejuice"
+exec ./tools/ripper/overnight_ripper.sh

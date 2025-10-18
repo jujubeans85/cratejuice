@@ -7,5 +7,10 @@ exports/*
 gift/*/web/*
 *.zip
 
+# logs
+*.log
+run.log
+ripper.log
+
 # OS junk
 .DS_Store
