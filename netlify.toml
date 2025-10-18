@@ -1,6 +1,11 @@
 [build]
-  publish = "v3/frontend"
-  command = "echo 'Static site - no build required'"
+  publish = "cratejuice/v3/frontend/public"
+  command = "cd cratejuice && ./crate_run.sh"
+
+[[redirects]]
+  from = "/gift/*"
+  to = "/gift/:splat/web/index.html"
+  status = 200
 
 [[redirects]]
   from = "/*"
