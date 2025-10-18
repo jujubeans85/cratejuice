@@ -1,0 +1,11 @@
+# audio (keep folder, ignore files)
+offgrid-crates/*
+!offgrid-crates/.gitkeep
+
+# builds/exports
+exports/*
+gift/*/web/*
+*.zip
+
+# OS junk
+.DS_Store
