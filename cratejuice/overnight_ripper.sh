@@ -11,6 +11,7 @@ while true; do
   if [ -f "$LIST" ]; then
     while IFS= read -r url; do
       [ -z "$url" ] && continue
+      [[ "$url" =~ ^#.*$ ]] && continue
       echo "🎵 Ripping: $url"
       yt-dlp --extract-audio --audio-format mp3 \
         -o "$CRATE/%(title)s.%(ext)s" "$url"
