@@ -13,8 +13,10 @@ while true; do
       [ -z "$url" ] && continue
       [[ "$url" =~ ^#.*$ ]] && continue
       echo "🎵 Ripping: $url"
-      yt-dlp --extract-audio --audio-format mp3 \
-        -o "$CRATE/%(title)s.%(ext)s" "$url"
+      if ! yt-dlp --extract-audio --audio-format mp3 \
+        -o "$CRATE/%(title)s.%(ext)s" "$url"; then
+        echo "⚠️ Failed to download: $url"
+      fi
     done < "$LIST"
   fi
   cd "$HOME/cratejuice" || { echo "Failed to change directory"; continue; }
