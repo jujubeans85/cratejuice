@@ -17,7 +17,7 @@ while true; do
         -o "$CRATE/%(title)s.%(ext)s" "$url"
     done < "$LIST"
   fi
-  cd "$HOME/cratejuice"
+  cd "$HOME/cratejuice" || { echo "Failed to change directory"; continue; }
   ./crate_run.sh
   echo "✅ Indexed at $(date)"
   sleep 600   # every 10 min
