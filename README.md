@@ -1,19 +1,26 @@
 # Crate Juice v3
 
-🧃 A modern, lightweight framework for building amazing web applications.
+🧃 A modern, lightweight framework for music crates and audio playback with PWA support.
 
 ## Project Structure
 
 ```
-v3/
-├── frontend/          # Frontend application
-│   ├── index.html    # Main HTML file
-│   ├── style.css     # Styles
-│   └── app.js        # JavaScript
-└── backend/          # Backend API
-    ├── main.py       # Flask application
-    ├── requirements.txt
-    └── render.yaml   # Render deployment config
+cratejuice/           # Main production application
+├── v3/frontend/public/  # PWA frontend with player, gifts, themes
+├── apps/indexer/     # Track indexing tool
+├── apps/ripper/      # Audio ripping tool
+├── tools/            # CLI tools (cjpack, cjplay)
+├── content/data/     # Playlists and track library
+└── offgrid-crates/   # MP3 storage directory
+
+v3/                   # Simple starter template (optional)
+├── frontend/         # Basic HTML/CSS/JS example
+└── backend/          # Flask API starter (optional)
+
+apps/ripper/          # Convenience ripper wrapper
+addurl                # Quick URL addition script
+cjrip                 # Overnight ripper launcher
+deploy.sh             # Production deployment helper
 ```
 
 ## Features
@@ -24,56 +31,73 @@ v3/
 
 ## Getting Started
 
-### Frontend
+### Production Application (cratejuice/)
 
-The frontend is a static web application that can be opened directly in a browser or served by any web server.
+The main production-ready application with full PWA support:
+
+```bash
+# Run the deployment preparation
+./deploy.sh
+
+# Or manually index tracks and test
+cd cratejuice
+./crate_run.sh
+python3 tools/cjplay.py --surprise 12
+```
+
+#### Adding Music
+
+```bash
+# Add URLs to rip (YouTube, SoundCloud, etc.)
+./addurl "https://youtube.com/watch?v=VIDEO_ID"
+
+# Or start the overnight ripper
+./cjrip
+```
 
 #### Local Development
 
-Simply open `v3/frontend/index.html` in your browser, or use a local server:
+Serve the production frontend locally:
 
 ```bash
-cd v3/frontend
+cd cratejuice/v3/frontend/public
 python -m http.server 8000
 ```
 
 Then visit `http://localhost:8000`
 
-### Backend
+### Simple Starter Template (v3/)
 
-The backend is a Flask API server.
+A minimal example for learning - static HTML/CSS/JS frontend with optional Flask backend:
 
-#### Installation
+#### Frontend
+```bash
+cd v3/frontend
+python -m http.server 8000
+```
 
+#### Backend (Optional)
 ```bash
 cd v3/backend
 pip install -r requirements.txt
-```
-
-#### Running the Server
-
-```bash
 python main.py
 ```
 
-The API will be available at `http://localhost:5000`
-
-#### API Endpoints
-
-- `GET /` - Welcome message
-- `GET /api/health` - Health check
-- `GET /api/features` - Get framework features
-- `GET /api/info` - Get framework information
-
 ## Deployment
 
-### Frontend (Netlify)
+### Production Frontend (Netlify)
 
-The frontend is configured to deploy on Netlify. The `netlify.toml` file contains the build configuration.
+The main application deploys to Netlify from the `cratejuice/v3/frontend/public/` directory:
 
-### Backend (Render)
+```bash
+netlify deploy --prod --dir=cratejuice/v3/frontend/public
+```
 
-The backend is configured to deploy on Render using the `render.yaml` configuration file.
+Configuration is in `netlify.toml` at the repository root.
+
+### Optional Backend (Render)
+
+The simple v3 backend starter can be deployed to Render if needed, though the production app is fully static and doesn't require it.
 
 ## License
 
