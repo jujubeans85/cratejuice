@@ -20,7 +20,11 @@ while true; do
     done < "$LIST"
   fi
   cd "$HOME/cratejuice" || { echo "Failed to change directory"; continue; }
-  ./crate_run.sh
+  if [ -x ./crate_run.sh ]; then
+    ./crate_run.sh
+  else
+    echo "⚠️ crate_run.sh not found or not executable"
+  fi
   echo "✅ Indexed at $(date)"
   sleep 600   # every 10 min
 done
