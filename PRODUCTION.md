@@ -93,14 +93,25 @@ echo "https://youtube.com/watch?v=VIDEO_ID" >> cratejuice/content/data/riplist.t
 ## 📁 Production Structure
 
 ```
-cratejuice/v3/frontend/public/  ← Deploy this folder
-├── index.html                 ← Main PWA
-├── app.js                     ← Player logic
-├── style.css                  ← Responsive styles
-├── manifest.webmanifest       ← PWA config
-├── service-worker.js          ← Offline support
-├── gift.html                  ← Gift interface
-└── icons/                     ← Theme icons
+Repository root/
+├── cratejuice/                      ← Main application
+│   ├── v3/frontend/public/          ← Deploy this folder to Netlify
+│   │   ├── index.html               ← Main PWA
+│   │   ├── app.js                   ← Player logic
+│   │   ├── style.css                ← Responsive styles
+│   │   ├── manifest.webmanifest     ← PWA config
+│   │   ├── service-worker.js        ← Offline support
+│   │   ├── gift.html                ← Gift interface
+│   │   └── icons/                   ← Theme icons
+│   ├── apps/                        ← Indexer and ripper
+│   ├── tools/                       ← CLI tools (cjpack, cjplay)
+│   ├── content/data/                ← Playlists and library JSON
+│   └── offgrid-crates/              ← MP3 storage
+├── apps/ripper/                     ← Convenience wrapper
+├── v3/                              ← Simple starter template (optional)
+├── addurl                           ← Quick URL addition
+├── cjrip                            ← Overnight ripper launcher
+└── deploy.sh                        ← Deployment helper
 ```
 
 ## 🔒 Security & Performance

@@ -1,7 +1,0 @@
-[build]
-  publish = "v3/frontend/public"
-
-[[redirects]]
-  from = "/gift/*"
-  to = "/gift/:splat/web/index.html"
-  status = 200
