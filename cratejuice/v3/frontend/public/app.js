@@ -120,6 +120,16 @@ function playTrack(t){
 }
 pitch.addEventListener("input", ()=>{ pitchVal.textContent = (Number(pitch.value)||1).toFixed(2)+"×"; player.playbackRate=Number(pitch.value)||1; });
 surprise.addEventListener("change", render);
+
+// Service Worker registration for PWA functionality
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => console.log('SW registered:', registration))
+      .catch(error => console.log('SW registration failed:', error));
+  });
+}
+
 let deferredPrompt;
 window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); deferredPrompt = e; const btn=document.getElementById("install"); btn.hidden=false; btn.onclick=async()=>{ btn.hidden=true; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; };});
 loadData();
