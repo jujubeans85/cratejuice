@@ -1,0 +1,13 @@
+[build]
+  publish = "cratejuice/v3/frontend/public"
+  command = "cd cratejuice && ./crate_run.sh"
+
+[[redirects]]
+  from = "/gift/*"
+  to = "/gift/:splat/web/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
