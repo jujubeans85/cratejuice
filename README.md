@@ -21,6 +21,7 @@ v3/
 - ⚡ **Fast** - Optimized for performance
 - 🎨 **Modern** - Clean and responsive design
 - 🔧 **Flexible** - Easy to customize
+- 📱 **iOS App Support** - Progressive Web App (PWA) installable on iOS devices
 
 ## Getting Started
 
@@ -74,6 +75,25 @@ The frontend is configured to deploy on Netlify. The `netlify.toml` file contain
 ### Backend (Render)
 
 The backend is configured to deploy on Render using the `render.yaml` configuration file.
+
+### GitHub Pages
+
+The project includes a GitHub Actions workflow that automatically deploys to GitHub Pages on push to the main branch.
+
+## 📱 iOS App Installation
+
+CrateJuice can be installed as a native-like app on iOS devices! See [iOS-INSTALLATION.md](iOS-INSTALLATION.md) for detailed instructions on how to:
+
+- Install the PWA on iPhone/iPad
+- Use the app like a native application
+- Access offline features
+- Troubleshoot common issues
+
+**Quick Start for iOS:**
+1. Open the deployed site in Safari on your iOS device
+2. Tap the Share button
+3. Select "Add to Home Screen"
+4. Enjoy CrateJuice as a standalone app!
 
 ## License
 
