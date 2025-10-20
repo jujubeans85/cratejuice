@@ -80,6 +80,16 @@ The backend is configured to deploy on Render using the `render.yaml` configurat
 
 The project includes a GitHub Actions workflow that automatically deploys to GitHub Pages on push to the main branch.
 
+## 🚀 Quick Start
+
+### Setup and Deploy
+Run the setup script to prepare for deployment:
+```bash
+./setup-deployment.sh
+```
+
+This will verify all prerequisites and guide you through the deployment process.
+
 ## 📱 iOS App Installation
 
 CrateJuice can be installed as a native-like app on iOS devices! See [iOS-INSTALLATION.md](iOS-INSTALLATION.md) for detailed instructions on how to:
@@ -94,6 +104,12 @@ CrateJuice can be installed as a native-like app on iOS devices! See [iOS-INSTAL
 2. Tap the Share button
 3. Select "Add to Home Screen"
 4. Enjoy CrateJuice as a standalone app!
+
+## 📖 Documentation
+
+- **[iOS-INSTALLATION.md](iOS-INSTALLATION.md)** - Complete guide for installing on iOS devices
+- **[DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md)** - Deployment options and configuration
+- **[PRODUCTION.md](PRODUCTION.md)** - Production deployment checklist
 
 ## License
 
