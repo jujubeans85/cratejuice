@@ -3,7 +3,9 @@
   "short_name": "CJ",
   "description": "Modern music crates and audio gifting platform",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0b0b0f",
   "theme_color": "#7e5bef",
   "icons": [
@@ -14,5 +16,6 @@
     { "src": "./icons/app_white.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "categories": ["music", "entertainment"],
-  "screenshots": []
+  "screenshots": [],
+  "prefer_related_applications": false
 }
