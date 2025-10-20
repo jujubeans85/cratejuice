@@ -6,6 +6,32 @@ const dl = $("#dl");
 
 let playlist = [], current = null, library = {};
 
+// Backend API configuration
+const API_CONFIG = {
+    baseUrl: window.location.hostname === 'localhost' 
+        ? 'http://localhost:5000' 
+        : 'https://cratejuice-backend.onrender.com',
+    endpoints: {
+        health: '/api/health',
+        library: '/api/library',
+        playlist: '/api/playlist'
+    }
+};
+
+// API utility function
+async function fetchAPI(endpoint) {
+    try {
+        const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`);
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.log(`Backend API not available for ${endpoint}, using fallback`);
+        return null;
+    }
+}
+
 // Simple direct playlist data
 const sampleTracks = [
   {
@@ -46,15 +72,15 @@ const sampleTracks = [
 ];
 
 async function loadData(){
-  // Try to load from files first
+  // Try to load from backend API first
   try {
-    const lib = await fetch("./library.json").then(r=>r.json()).catch(()=>null);
-    const p = await fetch("./playlist.json").then(r=>r.json()).catch(()=>null);
+    const backendLib = await fetchAPI(API_CONFIG.endpoints.library);
+    const backendPlaylist = await fetchAPI(API_CONFIG.endpoints.playlist);
     
-    if (lib && lib.tracks && Object.keys(lib.tracks).length > 0) {
-      library = lib.tracks;
-      if (p && Array.isArray(p)) {
-        playlist = p.map(id => ({
+    if (backendLib && backendLib.tracks && Object.keys(backendLib.tracks).length > 0) {
+      library = backendLib.tracks;
+      if (backendPlaylist && Array.isArray(backendPlaylist)) {
+        playlist = backendPlaylist.map(id => ({
           id,
           title: library[id]?.title || `Track ${id}`,
           artist: library[id]?.artist || 'Unknown Artist', 
@@ -70,14 +96,48 @@ async function loadData(){
           duration: library[id].duration
         }));
       }
+      console.log('✅ Loaded data from backend API');
     }
   } catch (error) {
-    console.log('Could not load data files, using sample data');
+    console.log('Backend API not available, trying local files');
   }
   
-  // Fallback to sample data if loading failed
+  // Fallback to local files if backend didn't work
+  if (playlist.length === 0) {
+    try {
+      const lib = await fetch("./library.json").then(r=>r.json()).catch(()=>null);
+      const p = await fetch("./playlist.json").then(r=>r.json()).catch(()=>null);
+      
+      if (lib && lib.tracks && Object.keys(lib.tracks).length > 0) {
+        library = lib.tracks;
+        if (p && Array.isArray(p)) {
+          playlist = p.map(id => ({
+            id,
+            title: library[id]?.title || `Track ${id}`,
+            artist: library[id]?.artist || 'Unknown Artist', 
+            file: library[id]?.url || '',
+            duration: library[id]?.duration || '0:00'
+          })).filter(t => t.file);
+        } else {
+          playlist = Object.keys(library).map(id => ({
+            id,
+            title: library[id].title,
+            artist: library[id].artist,
+            file: library[id].url,
+            duration: library[id].duration
+          }));
+        }
+        console.log('✅ Loaded data from local files');
+      }
+    } catch (error) {
+      console.log('Could not load local data files, using sample data');
+    }
+  }
+  
+  // Final fallback to sample data if everything else failed
   if (playlist.length === 0) {
     playlist = sampleTracks;
+    console.log('✅ Using sample data');
   }
   
   console.log('Final playlist:', playlist);
