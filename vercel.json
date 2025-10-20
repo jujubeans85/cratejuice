@@ -1,0 +1,23 @@
+{
+  "builds": [
+    {
+      "src": "cratejuice/v3/frontend/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/gift/(.*)",
+      "dest": "/gift/$1/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/cratejuice/v3/frontend/public/$1"
+    }
+  ],
+  "functions": {
+    "cratejuice/v3/frontend/public/**": {
+      "includeFiles": "**"
+    }
+  }
+}

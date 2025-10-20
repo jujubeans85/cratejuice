@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./cratejuice/offgrid-crates:/usr/share/nginx/html/audio
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    build:
+      context: ./v3/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./cratejuice/content/data:/app/data
+
+networks:
+  default:
+    name: cratejuice-network
