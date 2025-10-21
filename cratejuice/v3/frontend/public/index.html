@@ -2,12 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#7e5bef" />
 <meta name="description" content="Modern music crates and audio gifting platform" />
 <title>CrateJuice Player</title>
+
+<!-- PWA Manifest -->
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/app_violet.svg" type="image/svg+xml">
+
+<!-- iOS Specific Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="CrateJuice" />
+<link rel="apple-touch-icon" href="./icons/app_violet.svg" />
+<link rel="apple-touch-startup-image" href="./icons/app_violet.svg" />
+
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
