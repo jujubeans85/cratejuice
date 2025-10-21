@@ -8,7 +8,13 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)
+# Configure CORS for your frontend domain
+CORS(app, origins=[
+    "https://rococo-syrniki-9fc4e3.netlify.app",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
+])
 
 @app.route('/')
 def home():
