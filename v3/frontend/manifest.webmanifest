@@ -1,0 +1,21 @@
+{
+  "name": "CrateJuice v3",
+  "short_name": "CJ v3",
+  "description": "A modern, lightweight framework for building amazing web applications",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#4a90e2",
+  "icons": [
+    { "src": "./icons/app_violet.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "./icons/app_green.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "./icons/app_orange.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "./icons/app_pink.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "./icons/app_white.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
