@@ -1,4 +1,4 @@
-# Crate Juice v3
+# Crate Juice =v3
 
 🧃 A modern, lightweight framework for building amazing web applications.
 
