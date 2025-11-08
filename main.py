@@ -1,10 +1,13 @@
+[build]
+  publish = "frontend/build"
+  command = ""
 
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel, HttpUrl
-from typing import List, Optional
-import os, subprocess, shutil, glob, time, re
+# Proxy API calls to Render
+[[redirects]]
+  from = "/api/*"
+  to = "https://cratejuice-2.onrender.com/:splat"
+  status = 200
+  force = true
 
 APP_DIR = os.path.dirname(__file__)
 STORE = os.path.join(APP_DIR, "store")
