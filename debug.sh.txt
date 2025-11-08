@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# CJ BoltFlex Debug Script
+# run: bash backend/debug.sh
+set -e
+
+echo "--------------------------------------------------"
+echo "🍊 CJ BOLTFLEX / Render Debug Mode"
+echo "--------------------------------------------------"
+echo "Date: $(date)"
+echo "Working dir: $(pwd)"
+echo "Python: $(python3 --version)"
+echo "--------------------------------------------------"
+
+echo "📂 Listing backend files..."
+ls -la backend || echo "backend missing!"
+
+echo "--------------------------------------------------"
+echo "🧩 Checking environment variables..."
+echo "CJ_MEDIA_DIR=$CJ_MEDIA_DIR"
+echo "CJ_FEATURES=$CJ_FEATURES"
+echo "CJ_AUTOSHIP=$CJ_AUTOSHIP"
+echo "AWS_BUCKET=$AWS_BUCKET"
+echo "AWS_REGION=$AWS_REGION"
+echo "AWS_PREFIX=$AWS_PREFIX"
+echo "--------------------------------------------------"
+
+echo "🔍 Python packages:"
+pip list | head -n 20
+echo "--------------------------------------------------"
+
+echo "🌐 Testing FastAPI health endpoint..."
+curl -s http://localhost:$PORT/health || echo "App not yet running."
+
+echo "--------------------------------------------------"
+echo "✅ Done. If you see no errors above, environment is healthy."
+echo "--------------------------------------------------"
