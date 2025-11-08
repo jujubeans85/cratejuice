@@ -1,2 +1,2 @@
-pip install -r v3/backend/requirements.txt
-uvicorn v3.backend.main:app --host 0.0.0.0 --port $PORT
+fastapi==0.115.3
+uvicorn==0.30.6
