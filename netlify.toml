@@ -1,13 +1,10 @@
 [build]
-  publish = "cratejuice/v3/frontend/public"
-  command = "cd cratejuice && ./crate_run.sh"
+  publish = "frontend/build"
+  command = ""
 
+# Proxy API calls to Render
 [[redirects]]
-  from = "/gift/*"
-  to = "/gift/:splat/web/index.html"
+  from = "/api/*"
+  to = "https://cratejuice-2.onrender.com/:splat"
   status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  force = true
