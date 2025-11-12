@@ -1,13 +1,28 @@
 [build]
-  publish = "cratejuice/v3/frontend/public"
-  command = "cd cratejuice && ./crate_run.sh"
+  publish = "v3/frontend"
+  command = ""
 
 [[redirects]]
-  from = "/gift/*"
-  to = "/gift/:splat/web/index.html"
+  from = "/api/*"
+  to = "https://cratejuice.onrender.com/:splat"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "https://cratejuice.onrender.com/health"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
