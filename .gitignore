@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+__pyache__/
 *.py[cod]
 *$py.class
 *.so
@@ -9,7 +9,15 @@ venv/
 ENV/
 build/
 develop-eggs/
-dist/
+dist/# 🧊 Deep-Freezy-E auto-ignore
+deep_freezyE/
+deep_freezyE_pack.zip
+archive_2025/
+*.tar.gz
+*.bak
+*.backup
+*.log
+*.tmp
 downloads/
 eggs/
 .eggs/
@@ -45,3 +53,34 @@ Thumbs.db
 
 # Temporary files
 /tmp/
+
+# 🧊 Deep-Freezy-E auto-ignore
+deep_freezyE/
+deep_freezyE_pack.zip
+archive_2025/
+*.tar.gz
+*.bak
+*.backup
+*.log
+*.tmp
+echo -e "\n# 🧊 Deep-Freezy-E auto-ignore\ndeep_freezyE/\ndeep_freezyE_pack.zip\narchive_2025/\n*.tar.gz\n*.bak\n*.backup\n*.log\n*.tmp" >> .gitignore
+
+# 🧊 Deep-Freezy-E auto-ignore
+deep_freezyE/
+deep_freezyE_pack.zip
+archive_2025/
+*.tar.gz
+*.bak
+*.backup
+*.log
+*.tmp
+
+# 🧊 Deep-Freezy-E auto-ignore
+deep_freezyE/
+deep_freezyE_pack.zip
+archive_2025/
+*.tar.gz
+*.bak
+*.backup
+*.log
+*.tmp
