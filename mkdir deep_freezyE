@@ -1,0 +1,8 @@
+zip -r deep_freezyE_pack.zip deep_freezyE/
+zip -r deep_freezyE_pack.zip deep_freezyE/
+mv *.sh *.zip *.md *.json Dockerfile* DEPLOYMENT-GUIDE.md IMPLEMENTATION-SUMMARY.md render* vercel.json index.html deep_freezyE/ 2>/dev/null
+zip -r deep_freezyE_pack.zip deep_freezyE/
+git add -A
+git commit -m "🍲 Deep-Freezy-E: archived old soup files"
+git push origin main
+echo -e "\n# 🧊 Deep-Freezy-E auto-ignore\ndeep_freezyE/\ndeep_freezyE_pack.zip\narchive_2025/\n*.tar.gz\n*.bak\n*.backup\n*.log\n*.tmp" >> .gitignore

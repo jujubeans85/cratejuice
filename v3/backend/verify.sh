@@ -1,4 +1,8 @@
-#!/usr/bin/env bash
+zip -r deep_freezyE_pack.zip deep_freezyE/
+zip -r deep_freezyE_pack.zip deep_freezyE/
+zip -r deep_freezyE_pack.zip deep_freezyE/
+zip -r deep_freezyE_pack.zip deep_freezyE/
+zip -r deep_freezyE_pack.zip #!/usr/bin/env bash
 # CrateJuice Verify ☮️ — checks backend + frontend sync in one shot
 
 RENDER_URL="https://cratejuice-2.onrender.com/health"

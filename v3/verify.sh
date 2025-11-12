@@ -26,3 +26,24 @@ fi
 
 echo "---------------------------------------------"
 echo "If both ✅ show up, your Crate's heart is beating steady. 💜"
+#!/bin/bash
+echo "🧩 CrateJuice Render Verify starting..."
+cd "$(dirname "$0")" || exit
+
+# Clean install
+pip install -r requirements.txt --quiet
+
+# Sanity check backend entry
+echo "🔍 Checking backend.main import..."
+python - <<'PY'
+import importlib.util
+print("backend.main:", bool(importlib.util.find_spec("backend.main")))
+PY
+
+# Run temp test server
+echo "🚀 Launching Uvicorn test..."
+PYTHONPATH=.. uvicorn backend.main:app --host 0.0.0.0 --port 8000 --workers 1
+chmod +x v3/backend/verify_render.sh
+git add v3/backend/verify_render.sh
+git commit -m "🧩 Add verify_render.sh for Render test"
+git push origin main

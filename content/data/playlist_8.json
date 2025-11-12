@@ -1,1 +1,3 @@
-[]
+[]pwd
+git rev-parse --show-toplevel
+ls -la
