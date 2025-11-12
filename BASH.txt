@@ -1,1 +1,2 @@
-/frontend/posters/A6_poster.html?slug=underworld&api=http://localhost:8000
+cd ~/workspaces/cratejuice
+find . -maxdepth 3 -name "verify_render.sh"
