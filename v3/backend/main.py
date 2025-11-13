@@ -1,15 +1,13 @@
-# v3/backend/main.py
 import os
 import time
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- Create the app ---
+# Create the app
 app = FastAPI(title="CrateJuice v3 API")
 
-# --- CORS (front-end is allowed to call the API) ---
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "https://cratejuice.netlify.app")
+# CORS (front-end on Netlify allowed to call backend)
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +27,7 @@ def root():
 def health():
     return {"ok": True}
 
-# --- Status panel (for /status page, CI, etc.) ---
+# --- Status panel (for /status page if we add later) ---
 @app.get("/status")
 def status():
     return {
