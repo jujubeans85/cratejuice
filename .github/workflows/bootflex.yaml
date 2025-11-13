@@ -1,0 +1,47 @@
+name: BootFlex
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'v3/backend/**'
+      - 'v3/frontend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Health check (Render)
+        run: |
+          echo "🔍 Checking backend health..."
+          STATUS=$(curl -s https://cratejuice.onrender.com/health)
+          echo "Backend says: $STATUS"
+
+      - name: Health check (Netlify Proxy)
+        run: |
+          echo "🔍 Checking frontend health..."
+          STATUS=$(curl -s https://cratejuice.netlify.app/health)
+          echo "Frontend says: $STATUS"
+
+      - name: Deploy Render backend
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          echo "🚀 Triggering Render deploy..."
+          curl -s -X POST "$RENDER_DEPLOY_HOOK"
+          echo "Render deploy triggered."
+
+      - name: Deploy Netlify frontend
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          echo "🚀 Triggering Netlify deploy..."
+          npx netlify deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+          echo "Netlify deploy triggered."
+          
