@@ -1,0 +1,54 @@
+{
+  "name": "CrateJuice v3",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+
+  // Extra tools
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+
+  // What to run after the container is created
+  "postCreateCommand": "pip install -r v3/backend/requirements.txt || true",
+
+  // Open API port by default
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "CJ API",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "ms-vscode.remote-server",
+        "ms-vscode.cpptools-themes",
+        "ritwickdey.LiveServer"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.fontSize": 14,
+        "editor.tabSize": 2,
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/.venv": true
+        },
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "files.trimTrailingWhitespace": true
+      }
+    }
+  },
+
+  "remoteUser": "vscode"
+}
