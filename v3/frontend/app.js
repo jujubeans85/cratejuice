@@ -129,4 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (randomBtn) {
     randomBtn.addEventListener("click", spinRandom);
   }
+
 });
+/health route to frontend/app.js
+
