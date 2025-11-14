@@ -1,114 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crate Juice v3</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crate Juice v3</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🧃 Crate Juice v3</h1>
-            <p class="subtitle">Your Fresh Framework Solution</p>
-        </header>
-        
-        <main>
-            <section class="welcome">
-                <h2>Welcome to Crate Juice</h2>
-                <p>A modern, lightweight framework for building amazing web applications.</p>
-            </section>
-            
-            <section class="features">
-                <h3>Features</h3>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>⚡ Fast</h4>
-                        <p>Optimized for performance</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🎨 Modern</h4>
-                        <p>Clean and responsive design</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🔧 Flexible</h4>
-                        <p>Easy to customize</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="demo">
-                <h3>Try it out</h3>
-                <button id="demoBtn" class="btn-primary">Click Me!</button>
-                <p id="message"></p>
-            </section>
-        </main>
-        
-        <footer>
-            <p>&copy; 2025 Crate Juice. All rights reserved.</p>
-        </footer>
-    </div>
-    
-    <script src="app.js"></script>
+  <div class="page">
+    <header>
+      <h1>Crate Juice v3</h1>
+      <p>Your Fresh Framework Solution</p>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h2>Welcome to Crate Juice</h2>
+        <p>A modern, lightweight framework for building amazing web applications.</p>
+
+        <h3>Features</h3>
+        <ul>
+          <li>⚡ <strong>Fast</strong> – Optimized for performance</li>
+          <li>🍍 <strong>Modern</strong> – Clean and responsive design</li>
+          <li>🛠️ <strong>Flexible</strong> – Easy to customize</li>
+        </ul>
+
+        <h3>Try it out</h3>
+        <button id="demoBtn" class="btn-primary">Click Me!</button>
+        <p id="message"></p>
+      </section>
+
+      <!-- 🔥 LIVE CRATE SECTION -->
+      <section class="tracks-section">
+        <h2>Live Crate</h2>
+        <p class="tracks-hint">Powered by cjcathederal.onrender.com</p>
+
+        <div id="tracks" class="track-list">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2025 Crate Juice. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Demo button (old template behaviour)
+    const btn = document.getElementById("demoBtn");
+    const msg = document.getElementById("message");
+    if (btn && msg) {
+      btn.addEventListener("click", () => {
+        msg.textContent = "Crate Juice engine online. 💽✨";
+      });
+    }
+
+    // Live tracks from backend
+    async function loadTracks() {
+      const list = document.getElementById("tracks");
+      if (!list) return;
+
+      list.innerHTML = "<p>Loading crate…</p>";
+
+      try {
+        const res = await fetch("https://cjcathederal.onrender.com/tracks");
+        const data = await res.json();
+
+        list.innerHTML = "";
+
+        if (!data.tracks || !data.tracks.length) {
+          list.innerHTML = "<p>No tracks in the crate yet.</p>";
+          return;
+        }
+
+        data.tracks.forEach(t => {
+          const card = document.createElement("article");
+          card.className = "track-card";
+
+          const title = document.createElement("h4");
+          title.textContent = t.title || "Untitled track";
+
+          const meta = document.createElement("p");
+          meta.className = "track-meta";
+          meta.textContent = t.artist ? t.artist : "Unknown artist";
+
+          card.appendChild(title);
+          card.appendChild(meta);
+
+          if (t.url) {
+            const link = document.createElement("a");
+            link.href = t.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "Open link";
+            link.className = "track-link";
+            card.appendChild(link);
+          }
+
+          list.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error loading tracks:", err);
+        list.innerHTML = "<p>Could not load crate right now.</p>";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadTracks);
+  </script>
 </body>
 </html>
-<ul id="tracks"></ul>
-<h2>Live Tracks</h2>
-<ul id="tracks"></ul>
-<script>
-async function loadTracks() {
-  try {
-    const res = await fetch("https://cjcathederal.onrender.com/tracks");
-    const data = await res.json();
-
-    const list = document.getElementById("tracks");
-    list.innerHTML = "";
-
-    data.tracks.forEach(t => {
-      const li = document.createElement("li");
-      li.textContent = t.title;
-      list.appendChild(li);
-    });
-
-  } catch (err) {
-    console.error("Error loading tracks:", err);
-  }
-}
-<section class="tracks-section">
-  <h2>Live Crate</h2>
-  <p class="tracks-hint">Powered by cjcathederal.onrender.com</p>
-
-  <div class="tracks-layout">
-    <div class="tracks-left">
-      <h3>Tracks in this crate</h3>
-      <div id="tracks" class="track-list"></div>
-    </div>
-
-    <div class="tracks-right">
-      <h3>Add a track</h3>
-      <form id="add-track-form" class="track-form">
-        <label>
-          Title
-          <input type="text" id="track-title" required placeholder="Track title" />
-        </label>
-        <label>
-          Artist (optional)
-          <input type="text" id="track-artist" placeholder="Artist" />
-        </label>
-        <label>
-          URL (optional)
-          <input type="url" id="track-url" placeholder="Spotify / SC / YouTube URL" />
-        </label>
-        <button type="submit">Add to crate</button>
-      </form>
-
-      <div class="random-track">
-        <h3>Random pick</h3>
-        <button id="random-btn" type="button">Spin random</button>
-        <div id="random-display" class="random-display"></div>
-      </div>
-    </div>
-  </div>
-</section>
-loadTracks();
-</script>
