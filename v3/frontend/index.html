@@ -74,6 +74,41 @@ async function loadTracks() {
     console.error("Error loading tracks:", err);
   }
 }
+<section class="tracks-section">
+  <h2>Live Crate</h2>
+  <p class="tracks-hint">Powered by cjcathederal.onrender.com</p>
 
+  <div class="tracks-layout">
+    <div class="tracks-left">
+      <h3>Tracks in this crate</h3>
+      <div id="tracks" class="track-list"></div>
+    </div>
+
+    <div class="tracks-right">
+      <h3>Add a track</h3>
+      <form id="add-track-form" class="track-form">
+        <label>
+          Title
+          <input type="text" id="track-title" required placeholder="Track title" />
+        </label>
+        <label>
+          Artist (optional)
+          <input type="text" id="track-artist" placeholder="Artist" />
+        </label>
+        <label>
+          URL (optional)
+          <input type="url" id="track-url" placeholder="Spotify / SC / YouTube URL" />
+        </label>
+        <button type="submit">Add to crate</button>
+      </form>
+
+      <div class="random-track">
+        <h3>Random pick</h3>
+        <button id="random-btn" type="button">Spin random</button>
+        <div id="random-display" class="random-display"></div>
+      </div>
+    </div>
+  </div>
+</section>
 loadTracks();
 </script>
