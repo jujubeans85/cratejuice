@@ -53,3 +53,27 @@
 </body>
 </html>
 <ul id="tracks"></ul>
+<h2>Live Tracks</h2>
+<ul id="tracks"></ul>
+<script>
+async function loadTracks() {
+  try {
+    const res = await fetch("https://cjcathederal.onrender.com/tracks");
+    const data = await res.json();
+
+    const list = document.getElementById("tracks");
+    list.innerHTML = "";
+
+    data.tracks.forEach(t => {
+      const li = document.createElement("li");
+      li.textContent = t.title;
+      list.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("Error loading tracks:", err);
+  }
+}
+
+loadTracks();
+</script>
