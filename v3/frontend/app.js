@@ -1,178 +1,132 @@
 // Crate Juice v3 - Main Application Script
 
-// Backend API configuration
-const API_CONFIG = {
-    baseUrl: window.location.hostname === 'localhost' 
-        ? 'http://localhost:5000' 
-        : 'https://cratejuice-backend.onrender.com',
-    endpoints: {
-        health: '/api/health',
-        features: '/api/features',
-        info: '/api/info'
-    }
-};
+const API_BASE = "https://cjcathederal.onrender.com";
 
-// API utility functions
-async function fetchAPI(endpoint) {
-    try {
-        const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`);
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error(`Failed to fetch ${endpoint}:`, error);
-        return null;
-    }
-}
+async function loadTracks() {
+  try {
+    const res = await fetch(`${API_BASE}/tracks`);
+    const data = await res.json();
 
-// Load features from backend
-async function loadFeaturesFromBackend() {
-    const data = await fetchAPI(API_CONFIG.endpoints.features);
-    if (data && data.features) {
-        const featureGrid = document.querySelector('.feature-grid');
-        if (featureGrid) {
-            featureGrid.innerHTML = data.features.map(feature => `
-                <div class="feature-card">
-                    <h4>${feature.icon} ${feature.name}</h4>
-                    <p>${feature.description}</p>
-                </div>
-            `).join('');
-            
-            // Re-attach hover effects
-            attachFeatureCardEffects();
-        }
-    }
-}
+    const list = document.getElementById("tracks");
+    if (!list) return;
 
-// Load app info from backend
-async function loadAppInfo() {
-    const data = await fetchAPI(API_CONFIG.endpoints.info);
-    if (data) {
-        console.log('App Info:', data);
-        // Update page title if needed
-        if (data.name) {
-            document.querySelector('header h1').textContent = `🧃 ${data.name} v${data.version}`;
-        }
-    }
-}
+    list.innerHTML = "";
 
-// Check backend health
-async function checkBackendHealth() {
-    const health = await fetchAPI(API_CONFIG.endpoints.health);
-    if (health && health.status === 'healthy') {
-        console.log('✅ Backend is healthy');
-        return true;
-    } else {
-        console.warn('⚠️ Backend is not available, using static content');
-        return false;
-    }
-}
+    data.tracks.forEach((t) => {
+      const card = document.createElement("article");
+      card.className = "track-card";
 
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🧃 Crate Juice v3 Loaded!');
-    
-    // Check backend and load dynamic content
-    const backendAvailable = await checkBackendHealth();
-    if (backendAvailable) {
-        await loadAppInfo();
-        await loadFeaturesFromBackend();
-    }
-    
-    // Demo button functionality
-    const demoBtn = document.getElementById('demoBtn');
-    const messageEl = document.getElementById('message');
-    
-    const messages = [
-        '🎉 Welcome to Crate Juice!',
-        '✨ The framework is working perfectly!',
-        '🚀 Ready to build something amazing?',
-        '💡 Your ideas start here!',
-        '🌟 Making web development fun again!'
-    ];
-    
-    let messageIndex = 0;
-    
-    demoBtn.addEventListener('click', function() {
-        messageEl.textContent = messages[messageIndex];
-        messageIndex = (messageIndex + 1) % messages.length;
-        
-        // Add animation
-        messageEl.style.animation = 'none';
-        setTimeout(() => {
-            messageEl.style.animation = 'fadeInUp 0.5s ease';
-        }, 10);
+      const title = document.createElement("h4");
+      title.textContent = t.title;
+
+      const meta = document.createElement("p");
+      meta.className = "track-meta";
+      meta.textContent = t.artist ? t.artist : "Unknown artist";
+
+      card.appendChild(title);
+      card.appendChild(meta);
+
+      if (t.url) {
+        const link = document.createElement("a");
+        link.href = t.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Open link";
+        link.className = "track-link";
+        card.appendChild(link);
+      }
+
+      list.appendChild(card);
     });
-    
-    // Add smooth scroll behavior
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
+  } catch (err) {
+    console.error("Error loading tracks:", err);
+  }
+}
+
+async function addTrack(event) {
+  event.preventDefault();
+
+  const titleEl = document.getElementById("track-title");
+  const artistEl = document.getElementById("track-artist");
+  const urlEl = document.getElementById("track-url");
+
+  const track = {
+    title: titleEl.value.trim(),
+    artist: artistEl.value.trim() || null,
+    url: urlEl.value.trim() || null,
+  };
+
+  if (!track.title) return;
+
+  try:
+    const res = await fetch(`${API_BASE}/tracks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(track),
     });
-    
-    // Feature card hover effects
-    attachFeatureCardEffects();
+
+    if (!res.ok) {
+      console.error("Failed to add track");
+      return;
+    }
+
+    // Clear form
+    titleEl.value = "";
+    artistEl.value = "";
+    urlEl.value = "";
+
+    // Reload list
+    await loadTracks();
+  } catch (err) {
+    console.error("Error adding track:", err);
+  }
+}
+
+async function spinRandom() {
+  const display = document.getElementById("random-display");
+  if (!display) return;
+
+  display.textContent = "Spinning…";
+
+  try {
+    const res = await fetch(`${API_BASE}/tracks/random`);
+    const data = await res.json();
+
+    if (!data.track) {
+      display.textContent = "No tracks in crate yet.";
+      return;
+    }
+
+    const t = data.track;
+    display.innerHTML = `
+      <div class="random-card">
+        <div class="random-title">${t.title}</div>
+        <div class="random-artist">${t.artist || "Unknown artist"}</div>
+        ${
+          t.url
+            ? `<a href="${t.url}" target="_blank" rel="noopener noreferrer" class="track-link">Open link</a>`
+            : ""
+        }
+      </div>
+    `;
+  } catch (err) {
+    console.error("Error getting random track:", err);
+    display.textContent = "Error spinning crate.";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadTracks();
+
+  const form = document.getElementById("add-track-form");
+  if (form) {
+    form.addEventListener("submit", addTrack);
+  }
+
+  const randomBtn = document.getElementById("random-btn");
+  if (randomBtn) {
+    randomBtn.addEventListener("click", spinRandom);
+  }
 });
-
-// Function to attach hover effects to feature cards
-function attachFeatureCardEffects() {
-    const featureCards = document.querySelectorAll('.feature-card');
-    featureCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.background = '#f8f9fa';
-        });
-    });
-}
-async function loadTracks() {
-  const res = await fetch("https://cjcathederal.onrender.com/tracks");
-  const data = await res.json();
-
-  const list = document.getElementById("tracks");
-  list.innerHTML = "";
-
-  data.tracks.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t.title;
-    list.appendChild(li);
-  });
-}
-async function loadTracks() {
-  const res = await fetch("https://cjcathederal.onrender.com/tracks");
-  const data = await res.json();
-
-  const list = document.getElementById("tracks");
-  list.innerHTML = "";
-
-  data.tracks.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t.title;
-    list.appendChild(li);
-  });
-}
-
-async function loadTracks() {
-  const res = await fetch("https://cjcathederal.onrender.com/tracks");
-  const data = await res.json();
-
-  const list = document.getElementById("tracks");
-  list.innerHTML = "";
-
-  data.tracks.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = t.title;
-    list.appendChild(li);
-  });
-}
-
-loadTracks();
