@@ -134,3 +134,45 @@ function attachFeatureCardEffects() {
         });
     });
 }
+async function loadTracks() {
+  const res = await fetch("https://cjcathederal.onrender.com/tracks");
+  const data = await res.json();
+
+  const list = document.getElementById("tracks");
+  list.innerHTML = "";
+
+  data.tracks.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.title;
+    list.appendChild(li);
+  });
+}
+async function loadTracks() {
+  const res = await fetch("https://cjcathederal.onrender.com/tracks");
+  const data = await res.json();
+
+  const list = document.getElementById("tracks");
+  list.innerHTML = "";
+
+  data.tracks.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.title;
+    list.appendChild(li);
+  });
+}
+
+async function loadTracks() {
+  const res = await fetch("https://cjcathederal.onrender.com/tracks");
+  const data = await res.json();
+
+  const list = document.getElementById("tracks");
+  list.innerHTML = "";
+
+  data.tracks.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t.title;
+    list.appendChild(li);
+  });
+}
+
+loadTracks();
