@@ -7,3 +7,25 @@ function playTrack(num) {
   player.src = num === 1 ? TRACK_1 : TRACK_2;
   player.play();
 }
+// Mimi's track (your link)
+const MIMI = "https://open.spotify.com/embed/track/05WBwrL0aq96FCwObMm2NB";
+
+// Replace this with CBO's Spotify link anytime
+const CBO = "https://open.spotify.com/embed/track/2takcwOaAZWiXQijPHIx7B";
+
+function playTrack(which) {
+  const player = document.getElementById("player");
+  const url = which === 1 ? MIMI : CBO;
+
+  player.innerHTML = `
+    <iframe 
+      style="border-radius:12px" 
+      src="${url}?utm_source=generator" 
+      width="100%" 
+      height="152" 
+      frameBorder="0" 
+      allowfullscreen="" 
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
+  `;
+}
