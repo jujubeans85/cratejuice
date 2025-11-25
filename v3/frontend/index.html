@@ -1,112 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crate Juice v3</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>CrateJuice – 2-Track Player</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 { margin-bottom: 30px; }
+    button {
+      padding: 14px 26px;
+      margin: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #ff0077;
+      color: #fff;
+    }
+    button:hover {
+      background: #ff33aa;
+    }
+    audio {
+      margin-top: 30px;
+      width: 80%;
+    }
+  </style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <h1>Crate Juice v3</h1>
-      <p>Your Fresh Framework Solution</p>
-    </header>
 
-    <main>
-      <section class="hero">
-        <h2>Welcome to Crate Juice</h2>
-        <p>A modern, lightweight framework for building amazing web applications.</p>
+  <h1>🎧 CrateJuice Two-Track Demo</h1>
 
-        <h3>Features</h3>
-        <ul>
-          <li>⚡ <strong>Fast</strong> – Optimized for performance</li>
-          <li>🍍 <strong>Modern</strong> – Clean and responsive design</li>
-          <li>🛠️ <strong>Flexible</strong> – Easy to customize</li>
-        </ul>
+  <button onclick="playTrack(1)">Play Track 1</button>
+  <button onclick="playTrack(2)">Play Track 2</button>
 
-        <h3>Try it out</h3>
-        <button id="demoBtn" class="btn-primary">Click Me!</button>
-        <p id="message"></p>
-      </section>
+  <audio id="player" controls></audio>
 
-      <!-- 🔥 LIVE CRATE SECTION -->
-      <section class="tracks-section">
-        <h2>Live Crate</h2>
-        <p class="tracks-hint">Powered by cjcathederal.onrender.com</p>
-
-        <div id="tracks" class="track-list">
-          <!-- Filled by JS -->
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>© 2025 Crate Juice. All rights reserved.</p>
-    </footer>
-  </div>
-
-  <script>
-    // Demo button (old template behaviour)
-    const btn = document.getElementById("demoBtn");
-    const msg = document.getElementById("message");
-    if (btn && msg) {
-      btn.addEventListener("click", () => {
-        msg.textContent = "Crate Juice engine online. 💽✨";
-      });
-    }
-
-    // Live tracks from backend
-    async function loadTracks() {
-      const list = document.getElementById("tracks");
-      if (!list) return;
-
-      list.innerHTML = "<p>Loading crate…</p>";
-
-      try {
-        const res = await fetch("https://cjcathederal.onrender.com/tracks");
-        const data = await res.json();
-
-        list.innerHTML = "";
-
-        if (!data.tracks || !data.tracks.length) {
-          list.innerHTML = "<p>No tracks in the crate yet.</p>";
-          return;
-        }
-
-        data.tracks.forEach(t => {
-          const card = document.createElement("article");
-          card.className = "track-card";
-
-          const title = document.createElement("h4");
-          title.textContent = t.title || "Untitled track";
-
-          const meta = document.createElement("p");
-          meta.className = "track-meta";
-          meta.textContent = t.artist ? t.artist : "Unknown artist";
-
-          card.appendChild(title);
-          card.appendChild(meta);
-
-          if (t.url) {
-            const link = document.createElement("a");
-            link.href = t.url;
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-            link.textContent = "Open link";
-            link.className = "track-link";
-            card.appendChild(link);
-          }
-
-          list.appendChild(card);
-        });
-      } catch (err) {
-        console.error("Error loading tracks:", err);
-        list.innerHTML = "<p>Could not load crate right now.</p>";
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", loadTracks);
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
