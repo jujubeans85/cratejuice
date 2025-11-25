@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>CrateJuice – 2-Track Player</title>
+  <title>CrateJuice – Mimi & CBO Player</title>
   <style>
     body {
       background: #000;
@@ -25,20 +25,23 @@
     button:hover {
       background: #ff33aa;
     }
-    audio {
+    iframe {
       margin-top: 30px;
+      border-radius: 12px;
       width: 80%;
+      height: 152px;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-  <h1>🎧 CrateJuice Two-Track Demo</h1>
+  <h1>🎧 CrateJuice – Mimi & CBO Tracks</h1>
 
-  <button onclick="playTrack(1)">Play Track 1</button>
-  <button onclick="playTrack(2)">Play Track 2</button>
+  <button onclick="playTrack(1)">▶ Mimi’s Track</button>
+  <button onclick="playTrack(2)">▶ CBO’s Track</button>
 
-  <audio id="player" controls></audio>
+  <div id="player"></div>
 
   <script src="app.js"></script>
 </body>
