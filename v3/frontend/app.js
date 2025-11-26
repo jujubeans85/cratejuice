@@ -29,3 +29,14 @@ function playTrack(which) {
     </iframe>
   `;
 }
+// --- Mimi & Cbo dual-track crate ---
+const juiceCrate = {
+  mimi: "https://open.spotify.com/track/7rvkPmKDGZIKpEZH7CpqQe?si=6DadVL7_Qaa4HhAF6SPxPw",
+  cbo: "https://open.spotify.com/track/05WBwrL0aq96FCwObMm2NB?si=gARhVTf7RASPUbFQ-ezSYQ&context=spotify%3Aplaylist%3A37i9dQZF1EQnqst5TRi17F"
+};
+
+function playCrateTrack(name) {
+  const url = juiceCrate[name];
+  if (!url) return;
+  window.open(url, "_blank");
+}
