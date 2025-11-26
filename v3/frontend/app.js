@@ -58,4 +58,22 @@ function playCbo() {
     'noopener'
   );
 }
+// --- Live Crate: Mimi & Cbo dual-track panel ---
+
+const mimiTrackUrl = "https://open.spotify.com/track/7rvkPmKDGZIKpEZH7CpqQe?si=6DadVL7_Qaa4HhAF6SPxPw";
+// If you want a different Cbo track later, just swap this URL:
+const cboTrackUrl  = "https://open.spotify.com/track/23KpKEx7BEiILEiUzWpaql?si=Z1J7mcx2T66YIbFqS4zztQ";
+
+function openSpotifyTrack(url) {
+  if (!url) return;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function playMimi() {
+  openSpotifyTrack(mimiTrackUrl);
+}
+
+function playCbo() {
+  openSpotifyTrack(cboTrackUrl);
+}
 
