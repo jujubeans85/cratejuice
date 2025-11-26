@@ -40,3 +40,22 @@ function playCrateTrack(name) {
   if (!url) return;
   window.open(url, "_blank");
 }
+// --- Live Crate: Mimi & Cbo buttons ---
+
+function playMimi() {
+  window.open(
+    'https://open.spotify.com/track/7rvkPmKDGZIKpEZH7CpqQe?si=6DadVL7_Qaa4HhAF6SPxPw',
+    '_blank',
+    'noopener'
+  );
+}
+
+function playCbo() {
+  // TODO: paste Cbo's real Spotify track URL here
+  window.open(
+    'https://open.spotify.com/', // <--- replace with Cbo track link
+    '_blank',
+    'noopener'
+  );
+}
+
