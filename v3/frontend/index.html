@@ -1,61 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <title>CrateJuice – Mimi & CBO Player</title>
-  <style>
-    body {
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 { margin-bottom: 30px; }
-    button {
-      padding: 14px 26px;
-      margin: 12px;
-      font-size: 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #ff0077;
-      color: #fff;
-    }
-    button:hover {
-      background: #ff33aa;
-    }
-    iframe {
-      margin-top: 30px;
-      border-radius: 12px;
-      width: 80%;
-      height: 152px;
-      border: none;
-    }
-  </style>
-</head>
-<body><section class="dual-crate">
-  <h2>Mimi & Cbo — Live Crate</h2>
-  <p>Two anchors, one crate. Tap and go.</p>
+<section id="live-crate" class="live-crate">
+  <h2>Live Crate – Mimi &amp; Cbo</h2>
+  <p class="live-crate-sub">Powered by cjcathedral.onrender.com</p>
 
-  <div class="dual-crate-buttons">
-    <button class="crate-btn mimi-btn" onclick="playCrateTrack('mimi')">
-      💖 Play Mimi’s Track
+  <div class="live-crate-buttons">
+    <button class="crate-btn crate-btn-mimi" onclick="playMimi()">
+      Mimi · Press Play
     </button>
-
-    <button class="crate-btn cbo-btn" onclick="playCrateTrack('cbo')">
-      🔥 Play Cbo’s Track
+    <button class="crate-btn crate-btn-cbo" onclick="playCbo()">
+      Cbo · Press Play
     </button>
   </div>
 </section>
-
-  <h1>🎧 CrateJuice – Mimi & CBO Tracks</h1>
-
-  <button onclick="playTrack(1)">▶ Mimi’s Track</button>
-  <button onclick="playTrack(2)">▶ CBO’s Track</button>
-
-  <div id="player"></div>
-
-  <script src="app.js"></script>
-</body>
-</html>
