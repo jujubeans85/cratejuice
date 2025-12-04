@@ -4,11 +4,7 @@
   <meta charset="utf-8" />
   <title>Crate Juice v3 — TEST</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Favicon swap -->
-  <link rel="icon" href="assets/favicon-3dl4l.svg" type="image/svg+xml">
-  <link rel="icon" href="assets/favicon-3dl4l.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="assets/favicon-3dl4l.png">
-
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -16,30 +12,61 @@
     <h1>Crate Juice v3</h1>
     <p>Your Fresh Framework Solution</p>
 
-    <section id="live-crate" aria-label="Live crate panel">
-      <h2>Crate Juice v3 — TEST</h2>
-      <p class="powered">Powered by cjcatedral.onrender.com</p>
+    <section id="live-crate" class="panel">
+      <header class="panel-head">
+        <h2>Crate Juice v3 — TEST</h2>
+        <p class="powered">Powered by cjcatedral.onrender.com</p>
+      </header>
 
-      <div class="crate-buttons">
-        <button id="btnMimi" class="crate-btn mini-btn">Play Mimi</button>
-        <button id="btnCbo"  class="crate-btn cbo-btn">Play Cbo</button>
+      <div class="deck-wrap">
+        <article class="deck" id="deck-a">
+          <h3>Deck A — Mimi</h3>
+          <div class="platter"><div class="dots"></div></div>
+          <div class="meters">
+            <div class="vu" id="vuA"></div>
+            <div class="pitch">
+              <label>Pitch</label>
+              <input id="pitchA" type="range" min="0.5" max="1.5" step="0.01" value="1.0" />
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn play" id="playMimi">Play Mimi</button>
+            <button class="btn stop" id="stopMimi">Stop</button>
+            <a id="linkMimi" class="btn ghost" href="https://open.spotify.com/track/7xvkPmKDGZIKpeEHY7cp9e?si=sQaDvl7_Oaa4HhAF6SPxPw" target="_blank" rel="noopener">Open in Spotify</a>
+          </div>
+          <div class="status" id="statusA">Source: Checking…</div>
+        </article>
+
+        <article class="deck" id="deck-b">
+          <h3>Deck B — Cbo</h3>
+          <div class="platter"><div class="dots"></div></div>
+          <div class="meters">
+            <div class="vu" id="vuB"></div>
+            <div class="pitch">
+              <label>Pitch</label>
+              <input id="pitchB" type="range" min="0.5" max="1.5" step="0.01" value="1.0" />
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn play" id="playCbo">Play Cbo</button>
+            <button class="btn stop" id="stopCbo">Stop</button>
+            <a id="linkCbo" class="btn ghost" href="https://open.spotify.com/track/05WBwrLeaq96FcwoNbm2N8?si=sgARHvT7RASPUDF0-e2SYQ" target="_blank" rel="noopener">Open in Spotify</a>
+          </div>
+          <div class="status" id="statusB">Source: Checking…</div>
+        </article>
       </div>
 
-      <!-- Player slot: audio or embeds render here -->
-      <div id="playerSlot" class="player"></div>
-
-      <!-- Optional “Open in App” fallback shows only when relevant -->
-      <div id="openAppRow" class="open-app" hidden>
-        <button id="openInApp" class="open-app-btn">Open in App</button>
+      <div class="xfader">
+        <label>Crossfader</label>
+        <input id="xfader" type="range" min="-1" max="1" step="0.01" value="0" />
       </div>
 
-      <p class="note">No tracks in the crate yet.</p>
+      <footer class="note">No tracks in the crate yet.</footer>
     </section>
-
-    <footer>
-      <small>© 2025 Crate Juice. PLUR.</small>
-    </footer>
   </main>
+
+  <audio id="audioA" preload="auto" crossorigin="anonymous"></audio>
+  <audio id="audioB" preload="auto" crossorigin="anonymous"></audio>
 
   <script src="app.js"></script>
 </body>
