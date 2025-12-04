@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Crate Juice v3</title>
+  <title>Crate Juice v3 — TEST</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0b0d10" />
-
   <!-- Favicon swap -->
-  <!-- Put your icon files in v3/frontend/assets/ -->
-  <link rel="icon" href="assets/favicon.ico" />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <link rel="icon" href="assets/favicon-3dl4l.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-3dl4l.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/favicon-3dl4l.png">
 
-  <!-- Styles + JS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -20,19 +16,29 @@
     <h1>Crate Juice v3</h1>
     <p>Your Fresh Framework Solution</p>
 
-    <section id="live-crate">
-      <div class="inner">
-        <h2>Crate Juice v3 — TEST</h2>
-        <p class="powered">Powered by cjcathedral.onrender.com</p>
+    <section id="live-crate" aria-label="Live crate panel">
+      <h2>Crate Juice v3 — TEST</h2>
+      <p class="powered">Powered by cjcatedral.onrender.com</p>
 
-        <div class="crate-buttons">
-          <button id="btnMimi" class="crate-btn mini-btn">Play Mimi</button>
-          <button id="btnCbo"  class="crate-btn cbo-btn">Play Cbo</button>
-        </div>
-
-        <div id="player">No tracks in the crate yet.</div>
+      <div class="crate-buttons">
+        <button id="btnMimi" class="crate-btn mini-btn">Play Mimi</button>
+        <button id="btnCbo"  class="crate-btn cbo-btn">Play Cbo</button>
       </div>
+
+      <!-- Player slot: audio or embeds render here -->
+      <div id="playerSlot" class="player"></div>
+
+      <!-- Optional “Open in App” fallback shows only when relevant -->
+      <div id="openAppRow" class="open-app" hidden>
+        <button id="openInApp" class="open-app-btn">Open in App</button>
+      </div>
+
+      <p class="note">No tracks in the crate yet.</p>
     </section>
+
+    <footer>
+      <small>© 2025 Crate Juice. PLUR.</small>
+    </footer>
   </main>
 
   <script src="app.js"></script>
