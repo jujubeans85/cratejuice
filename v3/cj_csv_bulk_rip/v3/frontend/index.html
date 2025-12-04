@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CrateJuice — CSV Bulk Ripper</title>
+  <style>
+    :root{ --bg:#0b0b0c; --card:#141416; --ink:#ececec; --muted:#9a9aa0; --accent:#ff6a00; --line:#2a2a2d; }
+    html,body{ height:100%; }
+    body{ margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    header{ padding:24px 20px 8px 20px; }
+    h1{ margin:0 0 6px 0; font-size:22px; }
+    .sub{ color:var(--muted); font-size:13px; }
+    .wrap{ max-width:980px; margin:0 auto; padding:0 20px 70px; }
+    .row{ display:flex; gap:14px; flex-wrap:wrap; }
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .grow{ flex:1 1 420px; }
+    input,textarea,button{ font:14px/1.3 system-ui; }
+    button{ padding:10px 14px; border-radius:10px; border:1px solid #444; background:var(--accent); color:#111; font-weight:800; cursor:pointer; }
+    button.secondary{ background:#1b1c1f; color:#ddd; }
+    input[type=url]{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid #333; background:#1b1c1f; color:var(--ink); }
+    textarea{ width:100%; min-height:160px; padding:10px 12px; border-radius:10px; border:1px solid #333; background:#1b1c1f; color:var(--ink); resize:vertical; }
+    .hint{ color:var(--muted); font-size:12px; }
+    .list audio{ width:100%; margin-top:6px; }
+    .badge{ display:inline-block; padding:2px 8px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:var(--muted); }
+    .ok{ color:#8df58d } .bad{ color:#ff7777 }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <h1>CrateJuice — CSV Bulk Ripper</h1>
+    <div class="sub">Paste a CSV of SoundCloud/YouTube links (or drop a file) • <span class="badge">Built with love for MMI & CBO</span></div>
+  </header>
+
+  <main class="wrap">
+    <div class="row">
+      <section class="card grow">
+        <div class="hint">Backend: <span id="burl" class="mono"></span> · Health: <span id="health"></span></div>
+        <div class="row" style="margin-top:8px">
+          <input id="url" type="url" placeholder="Paste a single URL… (optional)" />
+          <button id="rip1">Rip One</button>
+          <button id="ping" class="secondary">Refresh</button>
+        </div>
+
+        <h3>CSV → Ripper</h3>
+        <div class="hint">Drop your CSV file here or paste the CSV in the box below. <em>Pro tip:</em> Use the SC extractor panel to make the CSV in one tap.</div>
+        <div id="drop" class="card" style="margin:10px 0; border-style:dashed; text-align:center; padding:24px">
+          Drop CSV here
+        </div>
+        <textarea id="csv" placeholder="url,title,author,type
+https://soundcloud.com/…"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button id="sendcsv">Send CSV to Ripper</button>
+          <button id="demo" class="secondary">Load Demo CSV</button>
+        </div>
+
+        <div id="out" style="margin-top:8px;"></div>
+      </section>
+
+      <section class="card grow">
+        <h3>Recent Downloads</h3>
+        <div class="hint">From /recent</div>
+        <div class="list" id="list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- SoundCloud one-button extractor panel -->
+  <script src="./sc_extractor.js"></script>
+  <script>
+  (function(){
+    const qs = new URLSearchParams(location.search);
+    const backend = qs.get('api') || localStorage.getItem('cj_api') || 'https://RENDER-BASE.onrender.com';
+    document.getElementById('burl').textContent = backend;
+    localStorage.setItem('cj_api', backend);
+
+    async function ping(){
+      try {
+        const r = await fetch(backend+'/health');
+        const j = await r.json();
+        const el = document.getElementById('health');
+        if (j.ok) { el.textContent = 'OK' + (j.ffmpeg ? ' (ffmpeg)' : ''); el.className='ok'; }
+        else { el.textContent = 'down'; el.className='bad'; }
+      } catch(e){
+        const el = document.getElementById('health');
+        el.textContent = 'down'; el.className = 'bad';
+      }
+    }
+    async function listRecent(){
+      try{
+        const r = await fetch(backend+'/recent');
+        const j = await r.json();
+        const box = document.getElementById('list');
+        box.innerHTML = '';
+        (j.items||[]).forEach(it=>{
+          const div = document.createElement('div');
+          div.style.marginBottom = '10px';
+          div.innerHTML = '<a class="mono" href="'+backend+it.url+'">'+it.file+'</a> · '+Math.round(it.size/1024)+' KB' +
+                          '<audio controls src="'+backend+it.url+'"></audio>';
+          box.appendChild(div);
+        });
+      }catch{}
+    }
+    async function ripOne(){
+      const url = document.getElementById('url').value.trim();
+      if(!url){ alert('Paste one URL first.'); return; }
+      document.getElementById('out').textContent = 'Queuing…';
+      const r = await fetch(backend+'/rip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({url}) });
+      const j = await r.json();
+      document.getElementById('out').textContent = j.ok ? ('Queued: '+j.id) : ('Failed: '+(j.error||'unknown'));
+    }
+    function parseCSV(text){
+      // very simple CSV: take first column as URL
+      return text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(line=>{
+        const firstComma = line.indexOf(',');
+        return (firstComma>0) ? line.slice(0, firstComma) : line;
+      });
+    }
+    async function sendCSV(urls){
+      document.getElementById('out').textContent = 'Queuing '+urls.length+'…';
+      const r = await fetch(backend+'/bulk_rip', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ urls }) });
+      const j = await r.json();
+      document.getElementById('out').textContent = j.ok ? ('Queued '+j.count+' links.') : ('Failed: '+(j.error||'unknown'));
+    }
+    function wireDrop(){
+      const zone = document.getElementById('drop');
+      zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.style.opacity = .8; });
+      zone.addEventListener('dragleave', e=>{ zone.style.opacity = 1; });
+      zone.addEventListener('drop', async e=>{
+        e.preventDefault(); zone.style.opacity = 1;
+        const file = e.dataTransfer.files[0];
+        if(!file) return;
+        const text = await file.text();
+        document.getElementById('csv').value = text;
+      });
+    }
+
+    document.getElementById('ping').onclick = () => { ping(); listRecent(); };
+    document.getElementById('rip1').onclick = ripOne;
+    document.getElementById('sendcsv').onclick = ()=>{
+      const text = document.getElementById('csv').value.trim();
+      if(!text){ alert('Paste CSV first.'); return; }
+      const urls = parseCSV(text);
+      if(urls.length===0){ alert('No URLs in CSV.'); return; }
+      sendCSV(urls);
+    };
+    document.getElementById('demo').onclick = ()=>{
+      document.getElementById('csv').value = "url\nhttps://soundcloud.com/camp4beats/sets/lofi\nhttps://soundcloud.com/defillama/crema\n";
+    };
+
+    CJ_SC.mountPanel(); // extractor floating UI
+    wireDrop();
+    ping(); listRecent(); // initial
+  })();
+  </script>
+</body>
+</html>
