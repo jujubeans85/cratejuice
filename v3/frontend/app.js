@@ -8,8 +8,11 @@ function playTrack(num) {
   const MIMI = "https://open.spotify.com/embed/track/7rvkPmKDGZIKpEZH7CpqQe?utm_source=generator";
   const CBO  = "https://open.spotify.com/embed/track/05WBwrL0aq96FCwObMm2NB?utm_source=generator";
 
-  const which = num === 1 ? MIMI : CBO;
-  const player = document.getElementById("player");
+  const MIMI = 'https://open.spotify.com/track/61FHPHXfnA0SG9sGjkrHNo';
+  const CBO  = 'https://open.spotify.com/track/23KpKEx7BEiILEiUzWpaql';
+
+function playMimi(){ window.open(MIMI, '_blank', 'noopener'); }
+function playCbo(){  window.open(CBO,  '_blank', 'noopener'); }
 
   player.innerHTML = `
     <iframe 
