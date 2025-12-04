@@ -1,190 +1,65 @@
-.tracks-section {
-  margin-top: 2.5rem;
-  padding: 1.5rem;
-  border-radius: 16px;
-  background: radial-gradient(circle at top left, #ff7af0 0, #111 45%, #00e1ff 100%);
-  color: #fdfdfd;
+/* ---------- base ---------- */
+:root{
+  --bg:#0b0b0b;
+  --fg:#eaeaea;
+  --muted:#a9acb2;
+  --accent-1:#b84ad6; /* violet */
+  --accent-2:#08d4f8; /* aqua */
+  --btn-shadow: 0 10px 24px rgba(0,0,0,.25);
 }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+main{max-width:960px;margin:32px auto;padding:0 20px}
+h1{margin:0 0 8px 0;font-size:clamp(28px,4vw,44px)}
+.tag{color:var(--muted);margin:0 0 24px}
 
-.tracks-hint {
-  opacity: 0.75;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-.track-list {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.track-card {
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  background: rgba(5, 5, 5, 0.9);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 25px rgba(0, 0, 0, 0.7);
-}
-
-.track-card h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.96rem;
-}
-
-.track-meta {
-  margin: 0;
-  font-size: 0.84rem;
-  opacity: 0.8;
-}
-
-.track-link {
-  display: inline-block;
-  margin-top: 0.4rem;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 225, 255, 0.6);
-}
-.dual-crate {
-  margin: 3rem auto;
-  max-width: 640px;
-  padding: 2rem;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #111827, #1f2937, #0f172a);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  text-align: center;
-}
-
-.dual-crate h2 {
-  margin-bottom: 0.5rem;
-}
-
-.dual-crate p {
-  margin-bottom: 1.5rem;
-  opacity: 0.8;
-}
-
-.dual-crate-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.crate-btn {
-  border: none;
-  border-radius: 999px;
-  padding: 0.85rem 1.6rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-}
-
-.crate-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
-}
-
-.crate-btn:active {
-  transform: translateY(1px);
-  box-shadow: none;
-  opacity: 0.85;
-}
-
-/* Mimi = soft neon pink / purple */
-.mimi-btn {
-  background: radial-gradient(circle at 0 0, #f472b6, #a855f7);
-  color: #fdf2f8;
-}
-
-/* Cbo = sunset orange / teal */
-.cbo-btn {
-  background: radial-gradient(circle at 0 0, #fb923c, #22c55e);
-  color: #0f172a;
-}
-/* --- Live Crate: Mimi & Cbo --- */
-
-.live-crate {
-  margin-top: 3rem;
-  padding: 2rem;
-  border-radius: 18px;
-  background: radial-gradient(circle at top left, #ff8ad4 0, #15151f 55%, #1cf2c2 100%);
-  color: #fff;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-}
-
-.live-crate h2 {
-  margin: 0 0 0.3rem;
-  font-size: 1.5rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.live-crate-sub {
-  margin: 0 0 1.4rem;
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
-
-.live-crate-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.crate-btn {
-  flex: 1 1 150px;
-  padding: 0.8rem 1.2rem;
-  border-radius: 999px;
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-  color: #0b0b12;
-}
-
-.crate-btn-mimi {
-  background: linear-gradient(135deg, #ffb7f5, #ff6ace);
-  box-shadow: 0 10px 22px rgba(255, 122, 214, 0.4);
-}
-
-.crate-btn-cbo {
-  background: linear-gradient(135deg, #ffe27a, #ff9a3c);
-  box-shadow: 0 10px 22px rgba(255, 165, 76, 0.4);
-}
-
-.crate-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
-  opacity: 0.95;
-}
-
-.crate-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-}
+/* ---------- live crate panel ---------- */
 #live-crate{
-  margin:2rem 0; padding:1.5rem 1.75rem;
-  background: linear-gradient(90deg,#b84ad6 0%,#1e2f3f 50%,#06dfe8 100%);
-  color:#fff; box-shadow:0 10px 24px rgba(0,0,0,.20);
-  border-radius:14px; max-width:920px;
+  padding:18px;
+  border-radius:14px;
+  background:
+    linear-gradient(90deg, rgba(184,74,214,.75), rgba(27,58,84,.85) 50%, rgba(8,212,248,.75));
+  box-shadow: var(--btn-shadow);
 }
-.crate-buttons{ display:flex; gap:12px; margin-top:1rem; flex-wrap:wrap; }
+#live-crate h2{margin:0 0 6px}
+.powered{margin:0 0 14px;color:#d9e7ff;opacity:.9}
+.empty-note{margin:12px 0 0;color:#e7e7e7;opacity:.85}
+
+/* ---------- buttons ---------- */
+.crate-buttons{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 6px}
 .crate-btn{
-  padding:.85rem 1.1rem; border:0; border-radius:999px; font-weight:800;
-  letter-spacing:.02em; box-shadow:0 8px 18px rgba(0,0,0,.18);
-  cursor:pointer; transition:transform .06s ease, box-shadow .12s ease;
+  appearance:none;
+  border:none;
+  padding:12px 18px;
+  font-weight:700;
+  border-radius:999px;
+  color:#111;
+  background:#f1f1f1;
+  box-shadow: var(--btn-shadow);
+  cursor:pointer;
+  transition:transform .08s ease, filter .08s ease;
 }
-.mini-btn{ background:#f1f1f1; color:#111; }
+.crate-btn:active{transform:translateY(1px)}
+.mini-btn{
+  background: radial-gradient(circle at 20% 20%, #ffffff, #dcdcdc);
+}
 .cbo-btn{
-  background:linear-gradient(90deg,#f0b02e 0%,#39c16f 100%);
-  color:#0a0a0a;
+  background: linear-gradient(90deg, #f7c14b, #3bd16b);
 }
-.crate-btn:active{ transform:translateY(1px); box-shadow:0 4px 10px rgba(0,0,0,.18); }
-#player { margin-top: 12px; max-width: 920px; }
-#player iframe { width: 100%; height: 152px; border-radius: 12px; }
+
+/* ---------- inline player container ---------- */
+#player{margin-top:12px;max-width:920px}
+#player iframe{width:100%;height:152px;border-radius:12px}
+
+/* ---------- responsive ---------- */
+@media (max-width:560px){
+  h1{font-size:28px}
+  #live-crate{padding:14px}
+}
