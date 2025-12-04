@@ -169,9 +169,20 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 #live-crate{
-  margin:2rem 0; padding:1.5rem 1.75rem; border-radius:14px;
-  background: linear-gradient(90deg,#b84ad6 0%, #0e2c2f 50%, #00e5ff 100%);
-  color:#fff; box-shadow:0 10px 24px rgba(0,0,0,.15);
+  margin:2rem 0; padding:1.5rem 1.75rem;
+  background: linear-gradient(90deg,#b84ad6 0%,#1e2f3f 50%,#06dfe8 100%);
+  color:#fff; box-shadow:0 10px 24px rgba(0,0,0,.20);
+  border-radius:14px; max-width:920px;
 }
-.crate-buttons{ display:flex; gap:12px; margin-top:.75rem; }
-.crate-btn{ padding:.7rem 1.1rem; border:0; border-radius:999px; font-weight:700; }
+.crate-buttons{ display:flex; gap:12px; margin-top:1rem; flex-wrap:wrap; }
+.crate-btn{
+  padding:.85rem 1.1rem; border:0; border-radius:999px; font-weight:800;
+  letter-spacing:.02em; box-shadow:0 8px 18px rgba(0,0,0,.18);
+  cursor:pointer; transition:transform .06s ease, box-shadow .12s ease;
+}
+.mini-btn{ background:#f1f1f1; color:#111; }
+.cbo-btn{
+  background:linear-gradient(90deg,#f0b02e 0%,#39c16f 100%);
+  color:#0a0a0a;
+}
+.crate-btn:active{ transform:translateY(1px); box-shadow:0 4px 10px rgba(0,0,0,.18); }
