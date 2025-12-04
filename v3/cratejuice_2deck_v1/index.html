@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crate Juice v3 — Two‑Deck</title>
+  <link rel="icon" href="assets/icons/favicon.ico">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Crate Juice v3</h1>
+    <p class="tag">Two‑Deck Starter · offline‑friendly</p>
+  </header>
+  <section id="live-crate" class="panel">
+    <div class="panel-head">
+      <h2>Crate Juice v3 — <span class="test">TEST</span></h2>
+      <p class="powered">Powered by <a href="https://cjcatedral.onrender.com" target="_blank" rel="noopener">cjcatedral.onrender.com</a></p>
+    </div>
+    <div class="decks">
+      <div class="deck" id="deckA">
+        <div class="platter"><div class="label">A</div><div class="strobe-dots"></div></div>
+        <div class="meters"><div class="vu"><span></span></div></div>
+        <div class="controls">
+          <button class="btn play mini" onclick="playMimi()">Play Mimi</button>
+          <button class="btn pause" onclick="pauseA()">Pause</button>
+          <label class="slider-label">Pitch
+            <input type="range" min="0.5" max="1.5" step="0.01" value="1" oninput="setRate('A', this.value)"/>
+          </label>
+        </div>
+        <audio id="audioA" preload="metadata">
+          <source src="assets/audio/mimi.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+      <div class="x-fader">
+        <label>Crossfader</label>
+        <input id="xfader" type="range" min="0" max="100" value="50" oninput="xFade(this.value)"/>
+      </div>
+      <div class="deck" id="deckB">
+        <div class="platter"><div class="label">B</div><div class="strobe-dots"></div></div>
+        <div class="meters"><div class="vu"><span></span></div></div>
+        <div class="controls">
+          <button class="btn play cbo" onclick="playCbo()">Play Cbo</button>
+          <button class="btn pause" onclick="pauseB()">Pause</button>
+          <label class="slider-label">Pitch
+            <input type="range" min="0.5" max="1.5" step="0.01" value="1" oninput="setRate('B', this.value)"/>
+          </label>
+        </div>
+        <audio id="audioB" preload="metadata">
+          <source src="assets/audio/cbo.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+    </div>
+    <p class="foot-note">No tracks in the crate yet? Drop your MP3s into <code>assets/audio/</code> named <code>mimi.mp3</code> and <code>cbo.mp3</code>. If missing, buttons will open Spotify.</p>
+  </section>
+  <script src="app.js"></script>
+</body>
+</html>
