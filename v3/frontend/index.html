@@ -4,40 +4,37 @@
   <meta charset="utf-8" />
   <title>Crate Juice v3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0d10" />
 
-  <!-- Icons / colors -->
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <!-- Favicon swap -->
+  <!-- Put your icon files in v3/frontend/assets/ -->
+  <link rel="icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
 
-  <!-- Styles -->
+  <!-- Styles + JS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main>
     <h1>Crate Juice v3</h1>
-    <p class="tag">Your Fresh Framework Solution</p>
+    <p>Your Fresh Framework Solution</p>
 
-    <!-- Live Crate: Mimi & Cbo panel -->
     <section id="live-crate">
-      <h2>Crate Juice v3 — TEST</h2>
-      <p class="powered">Powered by cjcatedral.onrender.com</p>
+      <div class="inner">
+        <h2>Crate Juice v3 — TEST</h2>
+        <p class="powered">Powered by cjcathedral.onrender.com</p>
 
-      <div class="crate-buttons">
-        <button id="btnMimi" class="crate-btn mini-btn" onclick="playMimi()">Play Mimi</button>
-        <button id="btnCbo"  class="crate-btn cbo-btn"  onclick="playCbo()">Play Cbo</button>
+        <div class="crate-buttons">
+          <button id="btnMimi" class="crate-btn mini-btn">Play Mimi</button>
+          <button id="btnCbo"  class="crate-btn cbo-btn">Play Cbo</button>
+        </div>
+
+        <div id="player">No tracks in the crate yet.</div>
       </div>
-
-      <div id="player" aria-label="Now Playing"></div>
-
-      <p class="empty-note">No tracks in the crate yet.</p>
     </section>
   </main>
 
-  <noscript>
-    <p style="padding:1rem">Enable JavaScript to use the Live Crate player.</p>
-  </noscript>
-
-  <!-- JS -->
   <script src="app.js"></script>
 </body>
 </html>
