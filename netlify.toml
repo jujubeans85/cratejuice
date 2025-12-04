@@ -1,15 +1,16 @@
 [build]
+  command = ""
   publish = "v3/frontend"
 
-# Proxy frontend /api → Render backend
+# Proxy frontend /api/* → Render backend
 [[redirects]]
   from = "/api/*"
   to = "https://cratejuice.onrender.com/:splat"
   status = 200
   force = true
-  headers = {Access-Control-Allow-Origin="*", Access-Control-Allow-Methods="GET, POST, OPTIONS", Access-Control-Allow-Headers="Content-Type, Authorization"}
+  headers = { Access-Control-Allow-Origin = "*" }
 
-# SPA catch-all
+# SPA fallback (optional; safe to keep)
 [[redirects]]
   from = "/*"
   to = "/index.html"
