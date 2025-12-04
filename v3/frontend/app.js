@@ -3,8 +3,8 @@
 // - SoundCloud track page: https://soundcloud.com/artist/track
 // - YouTube link: https://www.youtube.com/watch?v=dQw4w9WgXcQ  (or youtu.be/...)
 // - Spotify link: we'll show an "Open in app" button and embed nothing (iOS issue)
-const MIMI_URL = ''; // <- paste your real link
-const CBO_URL  = ''; // <- paste your real link
+const MIMI_URL = ''; https://open.spotify.com/track/12LXz2HixipVtmGYJegsUB?si=kxGkevuqSbOpWIRShx-5Wg<- paste your real link
+const CBO_URL  = ''; https://open.spotify.com/track/4GRyEnshYyoShwFtgNRqKa?si=hzNLobzARZOD_TJkD4kG7g
 // ===========================================================================
 
 const slot = document.getElementById('playerSlot');
