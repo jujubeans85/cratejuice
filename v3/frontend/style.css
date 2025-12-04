@@ -1,43 +1,92 @@
-/* CrateJuice v3 frontend — inline player with auto-fallback */
+/* CrateJuice v3 – minimal neon skin (B&W print friendly buttons) */
 
-const MIMI_EMBED = "https://open.spotify.com/embed/track/7vxKPmBKOZiGKpeEHY7cpqe?theme=0";
-const CBO_EMBED  = "https://open.spotify.com/embed/track/05WBvrtLeaq9F6PcwoNbm2N?theme=0";
-
-const MIMI_LINK  = "https://open.spotify.com/track/7vxKPmBKOZiGKpeEHY7cpqe";
-const CBO_LINK   = "https://open.spotify.com/track/05WBvrtLeaq9F6PcwoNbm2N";
-
-// keep inline on, but we'll fail-safe to new tab
-const INLINE = true;
-
-function renderInline(src, direct) {
-  const player = document.getElementById("player");
-  if (!player) { window.open(direct, "_blank", "noopener"); return; }
-
-  player.innerHTML = "";
-  const iframe = document.createElement("iframe");
-  iframe.src = src;
-  iframe.width = "100%";
-  iframe.height = "152";
-  iframe.frameBorder = "0";
-  iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
-  iframe.loading = "lazy";
-  iframe.style.borderRadius = "12px";
-  iframe.referrerPolicy = "strict-origin-when-cross-origin";
-
-  let loaded = false;
-  iframe.addEventListener("load", () => { loaded = true; }, { once: true });
-
-  player.appendChild(iframe);
-  player.scrollIntoView({ behavior: "smooth", block: "center" });
-
-  // if Spotify embed refuses to load (Safari/private mode/tracking), bail to new tab
-  setTimeout(() => { if (!loaded) window.open(direct, "_blank", "noopener"); }, 2500);
+:root{
+  --bg:#0b0d10;
+  --text:#eaeef3;
+  --muted:#9aa4b2;
+  --panel-start:#7a2cf1;    /* violet */
+  --panel-mid:#0e3440;      /* deep teal */
+  --panel-end:#00d4ff;      /* cyan */
+  --btn-face:#111318;
+  --btn-border:#2a2f39;
+  --btn-shadow:0 10px 24px rgba(0,0,0,.35);
+  --ring:#69e2ff;
 }
 
-function playMimi(){ INLINE ? renderInline(MIMI_EMBED, MIMI_LINK) : window.open(MIMI_LINK, "_blank", "noopener"); }
-function playCbo(){  INLINE ? renderInline(CBO_EMBED,  CBO_LINK)  : window.open(CBO_LINK,  "_blank", "noopener"); }
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:500 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btnMimi")?.addEventListener("click", playMimi);
-  document.getElementById("btnCbo") ?.addEventListener("click", playCbo);
-});
+main{ max-width:980px; margin:32px auto; padding:0 24px; }
+
+h1{ font-size:clamp(28px, 3.4vw, 44px); margin:8px 0 12px; }
+p{ color:var(--muted); margin:0 0 24px; }
+
+/* Live crate panel */
+#live-crate{
+  margin:0 auto 28px;
+  padding:18px;
+  border-radius:18px;
+  background: linear-gradient(90deg, var(--panel-start), var(--panel-mid), var(--panel-end));
+  box-shadow: 0 14px 40px rgba(0,0,0,.45);
+}
+#live-crate > .inner{
+  background:#1a1f26;
+  border-radius:14px;
+  padding:16px;
+}
+
+.powered{ font-size:12px; color:var(--muted); margin:-6px 0 12px; }
+
+/* Buttons */
+.crate-buttons{
+  display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+  margin:10px 0 14px;
+}
+.crate-btn{
+  -webkit-appearance:none; appearance:none;
+  border:1px solid var(--btn-border);
+  background:var(--btn-face);
+  color:var(--text);
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:700;
+  letter-spacing:.2px;
+  box-shadow:var(--btn-shadow);
+  cursor:pointer;
+  transition:transform .08s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+.crate-btn:focus-visible{
+  outline:0; box-shadow:0 0 0 3px color-mix(in srgb, var(--ring) 70%, transparent);
+}
+.crate-btn:active{ transform:translateY(1px); }
+
+/* colour hints (still B&W printable) */
+.mini-btn{
+  background: radial-gradient(140% 160% at 0% 0%, #6f5aff 0%, #222939 55%, #111318 100%);
+}
+.cbo-btn{
+  background: radial-gradient(120% 140% at 100% 0%, #1fd678 0%, #1a2d21 55%, #111318 100%);
+}
+
+/* Placeholder for player box (kept for layout consistency) */
+#player{
+  background:#0f1218;
+  border:1px dashed #2a3140;
+  border-radius:12px;
+  min-height:120px;
+  display:flex; align-items:center; justify-content:center;
+  color:#7f8a99; font-size:14px;
+}
+
+/* Small screens */
+@media (max-width:560px){
+  #live-crate{ padding:14px; }
+  .crate-btn{ padding:9px 14px; }
+}
