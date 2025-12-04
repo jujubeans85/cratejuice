@@ -1,65 +1,43 @@
-/* ---------- base ---------- */
-:root{
-  --bg:#0b0b0b;
-  --fg:#eaeaea;
-  --muted:#a9acb2;
-  --accent-1:#b84ad6; /* violet */
-  --accent-2:#08d4f8; /* aqua */
-  --btn-shadow: 0 10px 24px rgba(0,0,0,.25);
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:var(--bg);
-  color:var(--fg);
-  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-main{max-width:960px;margin:32px auto;padding:0 20px}
-h1{margin:0 0 8px 0;font-size:clamp(28px,4vw,44px)}
-.tag{color:var(--muted);margin:0 0 24px}
+/* CrateJuice v3 frontend — inline player with auto-fallback */
 
-/* ---------- live crate panel ---------- */
-#live-crate{
-  padding:18px;
-  border-radius:14px;
-  background:
-    linear-gradient(90deg, rgba(184,74,214,.75), rgba(27,58,84,.85) 50%, rgba(8,212,248,.75));
-  box-shadow: var(--btn-shadow);
-}
-#live-crate h2{margin:0 0 6px}
-.powered{margin:0 0 14px;color:#d9e7ff;opacity:.9}
-.empty-note{margin:12px 0 0;color:#e7e7e7;opacity:.85}
+const MIMI_EMBED = "https://open.spotify.com/embed/track/7vxKPmBKOZiGKpeEHY7cpqe?theme=0";
+const CBO_EMBED  = "https://open.spotify.com/embed/track/05WBvrtLeaq9F6PcwoNbm2N?theme=0";
 
-/* ---------- buttons ---------- */
-.crate-buttons{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 6px}
-.crate-btn{
-  appearance:none;
-  border:none;
-  padding:12px 18px;
-  font-weight:700;
-  border-radius:999px;
-  color:#111;
-  background:#f1f1f1;
-  box-shadow: var(--btn-shadow);
-  cursor:pointer;
-  transition:transform .08s ease, filter .08s ease;
-}
-.crate-btn:active{transform:translateY(1px)}
-.mini-btn{
-  background: radial-gradient(circle at 20% 20%, #ffffff, #dcdcdc);
-}
-.cbo-btn{
-  background: linear-gradient(90deg, #f7c14b, #3bd16b);
+const MIMI_LINK  = "https://open.spotify.com/track/7vxKPmBKOZiGKpeEHY7cpqe";
+const CBO_LINK   = "https://open.spotify.com/track/05WBvrtLeaq9F6PcwoNbm2N";
+
+// keep inline on, but we'll fail-safe to new tab
+const INLINE = true;
+
+function renderInline(src, direct) {
+  const player = document.getElementById("player");
+  if (!player) { window.open(direct, "_blank", "noopener"); return; }
+
+  player.innerHTML = "";
+  const iframe = document.createElement("iframe");
+  iframe.src = src;
+  iframe.width = "100%";
+  iframe.height = "152";
+  iframe.frameBorder = "0";
+  iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+  iframe.loading = "lazy";
+  iframe.style.borderRadius = "12px";
+  iframe.referrerPolicy = "strict-origin-when-cross-origin";
+
+  let loaded = false;
+  iframe.addEventListener("load", () => { loaded = true; }, { once: true });
+
+  player.appendChild(iframe);
+  player.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  // if Spotify embed refuses to load (Safari/private mode/tracking), bail to new tab
+  setTimeout(() => { if (!loaded) window.open(direct, "_blank", "noopener"); }, 2500);
 }
 
-/* ---------- inline player container ---------- */
-#player{margin-top:12px;max-width:920px}
-#player iframe{width:100%;height:152px;border-radius:12px}
+function playMimi(){ INLINE ? renderInline(MIMI_EMBED, MIMI_LINK) : window.open(MIMI_LINK, "_blank", "noopener"); }
+function playCbo(){  INLINE ? renderInline(CBO_EMBED,  CBO_LINK)  : window.open(CBO_LINK,  "_blank", "noopener"); }
 
-/* ---------- responsive ---------- */
-@media (max-width:560px){
-  h1{font-size:28px}
-  #live-crate{padding:14px}
-}
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnMimi")?.addEventListener("click", playMimi);
+  document.getElementById("btnCbo") ?.addEventListener("click", playCbo);
+});
