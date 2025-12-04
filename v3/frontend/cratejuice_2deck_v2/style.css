@@ -1,0 +1,63 @@
+/* CrateJuice — 2-deck neon */
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1720;
+  --text:#e9eef5;
+  --muted:#a7b0bd;
+  --accent1:#b14fe1;
+  --accent2:#00e2ff;
+  --btn:#1e2630;
+  --good:#3ecc6b;
+  --bad:#ff5468;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif}
+
+main{max-width:1100px;margin:32px auto;padding:0 16px}
+h1{font-size:2.4rem;margin:0 0 8px}
+p{margin:0 0 16px;color:var(--muted)}
+
+.panel{
+  margin-top:20px;
+  border-radius:18px;
+  background: linear-gradient(90deg, rgba(177,79,225,0.9), rgba(0,226,255,0.9));
+  padding:18px;
+  box-shadow:0 15px 40px rgba(0,0,0,.25), inset 0 0 0 2px rgba(255,255,255,.07);
+}
+.panel-head{background:rgba(8,12,19,.7);padding:16px;border-radius:12px}
+.panel-head h2{margin:0 0 6px}
+.panel-head .powered{margin:0;color:var(--muted)}
+
+.deck-wrap{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+@media (min-width: 900px){ .deck-wrap{grid-template-columns:1fr 1fr} }
+
+.deck{background:rgba(8,12,19,.75);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.06)}
+.deck h3{margin:0 0 10px}
+
+.platter{height:160px;background:radial-gradient(circle at 50% 48%, #1a2430, #0b1118);border-radius:12px;position:relative;overflow:hidden}
+.dots{position:absolute;inset:0;background-image:radial-gradient(#9ad7ff 1px, transparent 1px);background-size:18px 18px;animation:spin 3s linear infinite;opacity:.35}
+@keyframes spin{ to { transform: rotate(360deg); } }
+
+.meters{display:flex;gap:16px;align-items:center;margin:10px 0}
+.vu{flex:1;height:10px;background:#1b2631;border-radius:999px;overflow:hidden;position:relative}
+.vu:after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(90deg,#27e58a,#ffb454,#ff5670);animation:vu 1.2s ease-in-out infinite alternate;border-radius:999px}
+@keyframes vu{ from{width:18%} to{ width:90% } }
+
+.pitch{display:flex;align-items:center;gap:10px}
+.pitch input{width:140px}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+.btn{appearance:none;border:0;border-radius:999px;padding:10px 14px;background:var(--btn);color:var(--text);box-shadow:0 8px 16px rgba(0,0,0,.25);cursor:pointer}
+.btn.play{background:linear-gradient(90deg,#d8d8d8,#ffffff);color:#111}
+.btn.stop{background:#222;color:#eee}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.18)}
+
+.status{font-size:.9rem;color:var(--muted)}
+
+.xfader{margin:14px 6px 4px;background:rgba(8,12,19,.7);padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+.xfader input{width:100%}
+
+.note{margin-top:12px;color:#dbe7f2}
+
+#live-crate{padding:16px}
