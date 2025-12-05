@@ -70,3 +70,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
   xfader();
 });
+function openExternal(url) {
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch {
+    // absolute last-ditch
+    window.location.href = url;
+  }
+}
+
+// Example wire-up
+document.getElementById('mimiOpen').onclick = () =>
+  openExternal('https://open.spotify.com/track/7rvIxPkDOKZIKpeEHY7Cpg9'); // your real link
+document.getElementById('cboOpen').onclick = () =>
+  openExternal('https://open.spotify.com/track/05WBwtLeaq9f6PCwloNM2B');   // your real link
