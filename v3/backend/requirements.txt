@@ -1,4 +1,7 @@
-fastapi==0.115.3
-uvicorn==0.30.6
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+orjson
 qrcode[pil]
 Pillow
