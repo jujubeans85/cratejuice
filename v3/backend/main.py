@@ -371,4 +371,3 @@ def sheet_record(slugs: str = Query("mimi-01,cbo-01,ma-01,boss-01,jbo-01,tim-01,
     items = [s.strip() for s in slugs.split(",") if s.strip()]
     page = _grid_sheet(items, _make_record, dpi, pal)
     return StreamingResponse(io.BytesIO(to_png_bytes(page, dpi=dpi)), media_type="image/png")
-                   
