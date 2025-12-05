@@ -1,4 +1,4 @@
-fastapi==0.115.3
-uvicorn==0.30.6
-qrcode[pil]
+fastapi
+uvicorn
+qrcode
 Pillow
