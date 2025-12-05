@@ -3,5 +3,7 @@ uvicorn[standard]
 python-multipart
 pydantic
 orjson
-qrcode[pil]
-Pillow
+qrcode[pil]==7.4.2
+Pillow==10.4.0
+qrcode[pil]==7.4.2
+Pillow==10.4.0
