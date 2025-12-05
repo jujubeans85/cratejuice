@@ -6,4 +6,3 @@ orjson==3.10.7
 python-multipart==0.0.9
 qrcode[pil]==7.4.2
 Pillow==10.4.0
-
