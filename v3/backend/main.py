@@ -1,306 +1,331 @@
-import io, os, time, math, sqlite3, hashlib
-from typing import List, Optional
-from fastapi import FastAPI, Request, HTTPException, Query
+  v3/backend/main.py
+  CrateJuice QR backend — reference baseline (FastAPI)
+Endpoints:
+   GET  /health
+  POST /api/qr/create                     {"slug": "...", "target_url": "...", "palette": "neon"}
+  GET  /api/qr/slug/{slug}
+  GET  /api/qr/plain/{slug}.png
+  GET  /api/qr/record/{slug}.png
+   GET  /api/qr/record_label/{slug}.png    ?caption=Hello
+ GET  /api/qr/anim/{slug}.gif  GET  /api/qr/sheet_plain.png            ?slugs=a,b,c...&dpi=300
+  GET  /api/qr/sheet_record.png           ?slugs=...&dpi=300
+
+import io, os, math, sqlite3
+from typing import Optional, List, Tuple
+from dataclasses import dataclass
+
+from fastapi import FastAPI, HTTPException, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
+from pydantic import BaseModel
+
 from PIL import Image, ImageDraw, ImageFilter
 import qrcode
+from qrcode.constants import ERROR_CORRECT_Q
 
-APP_NAME = "CrateJuice QR Engine"
-DB_PATH = os.environ.get("CJ_DB_PATH", "cjqr.db")
+# -----------------------------------------------------------------------------
+# App + CORS
+# -----------------------------------------------------------------------------
+app = FastAPI(title="CrateJuice QR Backend", version="0.3.0")
 
-# -------------------------
-# FastAPI app + CORS
-# -------------------------
-app = FastAPI(title=APP_NAME)
+def _env_list(name: str) -> List[str]:
+    raw = os.getenv(name, "")
+    if not raw:
+        return []
+    return [x.strip() for x in raw.split(",") if x.strip()]
 
-cors_origins = [
+CORS_ALLOW_ORIGINS = _env_list("CORS_ALLOW_ORIGINS") or [
     "https://cratejuice.netlify.app",
     "https://main--cratejuice.netlify.app",
-    os.environ.get("EXTRA_ORIGIN", "").strip() or "http://localhost:3000",
+    "http://localhost",
+    "http://localhost:5173",
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
+    allow_origins=CORS_ALLOW_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# -------------------------
-# DB helpers
-# -------------------------
-def _db():
-    con = sqlite3.connect(DB_PATH)
-    con.execute("PRAGMA journal_mode=WAL;")
-    con.row_factory = sqlite3.Row
-    return con
+# -----------------------------------------------------------------------------
+# Storage (SQLite with in-memory fallback)
+# -----------------------------------------------------------------------------
+DB_PATH = os.getenv("DB_PATH", os.path.join(os.path.dirname(__file__), "cj_qr.sqlite3"))
+MEM_STORE = {}  # slug -> (target_url, palette)
 
-def _init_db():
-    con = _db()
-    con.executescript("""
-    CREATE TABLE IF NOT EXISTS slugs(
-        slug TEXT PRIMARY KEY,
-        target_url TEXT NOT NULL,
-        title TEXT DEFAULT '',
-        created_at INTEGER
-    );
-    CREATE TABLE IF NOT EXISTS claims(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        slug TEXT NOT NULL,
-        ip TEXT,
-        ua TEXT,
-        lat REAL,
-        lon REAL,
-        approx INTEGER DEFAULT 1,
-        created_at INTEGER
-    );
-    CREATE TABLE IF NOT EXISTS mints(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        slug TEXT NOT NULL,
-        qty INTEGER NOT NULL,
-        created_at INTEGER
-    );
-    """)
-    con.commit()
-    con.close()
+def _db_conn():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS slugs (slug TEXT PRIMARY KEY, target TEXT NOT NULL, palette TEXT)"
+        )
+        return conn
+    except Exception:
+        return None
 
-@app.on_event("startup")
-def _startup():
-    _init_db()
+def set_slug(slug: str, target: str, palette: Optional[str]):
+    conn = _db_conn()
+    if conn:
+        conn.execute(
+            "INSERT INTO slugs (slug, target, palette) VALUES (?, ?, ?) "
+            "ON CONFLICT(slug) DO UPDATE SET target=excluded.target, palette=excluded.palette",
+            (slug, target, palette),
+        )
+        conn.commit()
+        conn.close()
+    else:
+        MEM_STORE[slug] = (target, palette)
 
-# -------------------------
-# Palettes (Image 2 vibe)
-# -------------------------
+def get_slug(slug: str) -> Tuple[str, Optional[str]]:
+    conn = _db_conn()
+    if conn:
+        cur = conn.execute("SELECT target, palette FROM slugs WHERE slug = ?", (slug,))
+        row = cur.fetchone()
+        conn.close()
+        if not row:
+            raise HTTPException(status_code=404, detail="Slug not found")
+        return row[0], row[1]
+    else:
+        if slug not in MEM_STORE:
+            raise HTTPException(status_code=404, detail="Slug not found")
+        return MEM_STORE[slug]
+
+# -----------------------------------------------------------------------------
+# Palettes (default = neon orange/blue grit)
+# -----------------------------------------------------------------------------
+@dataclass
+class Palette:
+    name: str
+    bg: Tuple[int,int,int,int]
+    record_dark: Tuple[int,int,int,int]
+    record_light: Tuple[int,int,int,int]
+    label: Tuple[int,int,int,int]
+    qr_dark: Tuple[int,int,int,int]
+    qr_light: Tuple[int,int,int,int]
+    grit: Tuple[int,int,int,int]
+
 PALETTES = {
-    # "img2" = neon orange record on deep-navy / teal/purple accents
-    "img2": {
-        "bg": (10, 14, 26),          # deep navy
-        "groove": (22, 26, 40),
-        "vinyl": (14, 14, 18),
-        "label": (255, 120, 28),     # neon orange
-        "accent": (69, 38, 130),     # purple
-        "accent2": (0, 200, 255),    # teal
-        "qr_dark": (16, 16, 16),
-        "qr_light": (248, 250, 252),
-    },
-    "mono": {
-        "bg": (18,18,18),
-        "groove": (28,28,28),
-        "vinyl": (12,12,12),
-        "label": (220,220,220),
-        "accent": (90,90,90),
-        "accent2": (150,150,150),
-        "qr_dark": (0,0,0),
-        "qr_light": (255,255,255),
-    }
+    "neon": Palette(
+        name="neon",
+        bg=(10, 12, 18, 255),            # deep charcoal
+        record_dark=(12,12,14,255),      # near-black vinyl
+        record_light=(34,34,46,255),     # faint ring highlight
+        label=(255,120,20,255),          # neon orange
+        qr_dark=(0,0,0,255),             # QR dark
+        qr_light=(248,248,248,255),      # QR light
+        grit=(0, 200, 255, 25),          # subtle cyan grit specks
+    ),
+    "mono": Palette(
+        name="mono",
+        bg=(8,8,10,255),
+        record_dark=(16,16,18,255),
+        record_light=(52,52,60,255),
+        label=(225,225,225,255),
+        qr_dark=(0,0,0,255),
+        qr_light=(255,255,255,255),
+        grit=(255,255,255,15),
+    ),
 }
 
-def _palette(name: Optional[str]):
-    return PALETTES.get((name or "img2").lower(), PALETTES["img2"])
+def _palette(name: Optional[str]) -> Palette:
+    if name and name in PALETTES:
+        return PALETTES[name]
+    return PALETTES["neon"]
 
-# -------------------------
-# Slug registry
-# -------------------------
-def upsert_slug(slug: str, target_url: str, title: str = ""):
-    con = _db()
-    con.execute(
-        "INSERT INTO slugs(slug, target_url, title, created_at) "
-        "VALUES(?,?,?,?) "
-        "ON CONFLICT(slug) DO UPDATE SET target_url=excluded.target_url, title=excluded.title",
-        (slug, target_url, title, int(time.time()))
+# -----------------------------------------------------------------------------
+# Helpers: QR generation + record composition
+# -----------------------------------------------------------------------------
+def _qr_image(data: str, size: int, dark=(0,0,0,255), light=(255,255,255,255)) -> Image.Image:
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=ERROR_CORRECT_Q,
+        box_size=10,
+        border=2,  # keep quiet zone tight
     )
-    con.commit(); con.close()
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color=tuple(dark[:3]), back_color=tuple(light[:3])).convert("RGBA")
+    # Scale to exact size with sharp edges
+    return img.resize((size, size), resample=Image.NEAREST)
 
-def get_target(slug: str) -> str:
-    con = _db()
-    cur = con.execute("SELECT target_url FROM slugs WHERE slug=?", (slug,))
-    row = cur.fetchone()
-    con.close()
-    if row: return row["target_url"]
-    # fallback: still generate a QR pointing to site with slug tag
-    return f"https://cratejuice.netlify.app/?s={slug}"
+def to_png_bytes(im: Image.Image, dpi: Optional[int]=None) -> bytes:
+    bio = io.BytesIO()
+    save_kwargs = {"optimize": True}
+    if dpi:
+        save_kwargs["dpi"] = (dpi, dpi)
+    im.save(bio, format="PNG", **save_kwargs)
+    return bio.getvalue()
 
-# -------------------------
-# Record renderer
-# -------------------------
-def _qr_image(data: str, box: int, dark, light) -> Image.Image:
-    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_Q)
-    qr.add_data(data); qr.make(fit=True)
-    img = qr.make_image(fill_color=dark, back_color=light).convert("RGBA")
-    w, h = img.size
-    # scale to box
-    scale = box / max(w, h)
-    img = img.resize((int(w*scale), int(h*scale)), Image.NEAREST)
-    return img
+def _grit_overlay(w: int, h: int, color=(0,200,255,25), step=32) -> Image.Image:
+    """Light speckle overlay to get that neon grit vibe."""
+    grit = Image.new("RGBA", (w, h), (0,0,0,0))
+    d = ImageDraw.Draw(grit)
+    for y in range(0, h, step):
+        for x in range(0, w, step):
+            r = 1
+            d.ellipse((x-r, y-r, x+r, y+r), fill=color)
+    return grit.filter(ImageFilter.GaussianBlur(0.5))
 
-def _record_disc(size: int, pal) -> Image.Image:
-    """
-    Create a vinyl disc with grooves and a center label.
-    Returns an RGBA image (square).
-    """
-    img = Image.new("RGBA", (size, size), pal["bg"])
-    drw = ImageDraw.Draw(img)
+def compose_record_qr(slug: str, size: int, pal: Palette, target: Optional[str]=None) -> Image.Image:
+    """Square vinyl record with grooves + label + scannable QR centered."""
+    target_url = target
+    if not target_url:
+        target_url, _p = get_slug(slug)
 
+    im = Image.new("RGBA", (size, size), pal.bg)
+
+    # vinyl
     cx = cy = size // 2
-    R = int(size*0.48)        # outer radius
-    r_label = int(size*0.22)  # label radius
-    r_hole = max(2, size // 120)
+    radius = int(size*0.48)
+    draw = ImageDraw.Draw(im)
+    draw.ellipse((cx-radius, cy-radius, cx+radius, cy+radius), fill=pal.record_dark)
 
-    # vinyl base
-    drw.ellipse([cx-R, cy-R, cx+R, cy+R], fill=pal["vinyl"])
-
-    # subtle radial vignette
-    vignette = Image.new("L", (size, size), 0)
-    vg = ImageDraw.Draw(vignette)
-    vg.ellipse([cx-R, cy-R, cx+R, cy+R], fill=220)
-    vignette = vignette.filter(ImageFilter.GaussianBlur(radius=size//18))
-    img.putalpha(vignette)
-
-    # grooves
-    gcol = pal["groove"]
-    for rr in range(R-4, r_label+8, -6):
-        drw.ellipse([cx-rr, cy-rr, cx+rr, cy+rr], outline=gcol)
+    # grooves (faint concentric rings)
+    inner = int(radius*0.35)
+    for r in range(inner, radius, 6):
+        a = 32  # alpha
+        col = (pal.record_light[0], pal.record_light[1], pal.record_light[2], a)
+        draw.ellipse((cx-r, cy-r, cx+r, cy+r), outline=col, width=1)
 
     # center label
-    drw.ellipse([cx-r_label, cy-r_label, cx+r_label, cy+r_label], fill=pal["label"])
-    # spindle hole
-    drw.ellipse([cx-r_hole, cy-r_hole, cx+r_hole, cy+r_hole], fill=(0,0,0))
+    lab_r = int(radius*0.42)
+    draw.ellipse((cx-lab_r, cy-lab_r, cx+lab_r, cy+lab_r), fill=pal.label)
 
-    return img
+    # tiny spindle hole
+    hr = max(2, size//120)
+    draw.ellipse((cx-hr, cy-hr, cx+hr, cy+hr), fill=(0,0,0,180))
 
-def compose_record_qr(slug: str, size: int, pal) -> Image.Image:
-    record = _record_disc(size, pal)
-    target = get_target(slug)
+    # QR sized to label
+    qr_size = int(lab_r*1.5)  # bleed out a touch for scan confidence
+    qr = _qr_image(target_url, qr_size, pal.qr_dark, pal.qr_light)
+    # soft drop shadow
+    shadow = Image.new("RGBA", qr.size, (0,0,0,0))
+    sd = ImageDraw.Draw(shadow)
+    sd.rectangle((0,0,qr.size[0],qr.size[1]), fill=(0,0,0,80))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(6))
+    im.alpha_composite(shadow, (cx-qr_size//2+2, cy-qr_size//2+2))
+    im.alpha_composite(qr, (cx-qr_size//2, cy-qr_size//2))
 
-    # QR sits inside the label area
-    qr_box = int(size * 0.28)
-    qr_img = _qr_image(target, qr_box, pal["qr_dark"], pal["qr_light"])
+    # grit
+    im.alpha_composite(_grit_overlay(size, size, pal.grit))
+    return im
 
-    # paste centered
-    x = (size - qr_img.width)//2
-    y = (size - qr_img.height)//2
-    record.alpha_composite(qr_img, (x, y))
+# -----------------------------------------------------------------------------
+# Models
+# -----------------------------------------------------------------------------
+class CreateSlug(BaseModel):
+    slug: str
+    target_url: str
+    palette: Optional[str] = None
 
-    # subtle outer glow ring
-    glow = Image.new("RGBA", record.size, (0,0,0,0))
-    gd = ImageDraw.Draw(glow)
-    cx = cy = size//2
-    R = int(size*0.485)
-    gd.ellipse([cx-R, cy-R, cx+R, cy+R], outline=pal["accent2"], width=2)
-    glow = glow.filter(ImageFilter.GaussianBlur(radius=size//100))
-    record = Image.alpha_composite(record, glow)
-    return record
-
-# -------------------------
-# Helpers: bytes responses
-# -------------------------
-def to_png_bytes(img: Image.Image, dpi: Optional[int]=None) -> bytes:
-    buf = io.BytesIO()
-    save_kwargs = {"format": "PNG"}
-    if dpi: save_kwargs["dpi"] = (dpi, dpi)
-    img.save(buf, **save_kwargs)
-    buf.seek(0)
-    return buf.getvalue()
-
-def to_gif_bytes(frames: List[Image.Image], duration_ms: int=60) -> bytes:
-    buf = io.BytesIO()
-    frames[0].save(buf, format="GIF", save_all=True,
-                   append_images=frames[1:], loop=0, duration=duration_ms,
-                   disposal=2)
-    buf.seek(0)
-    return buf.getvalue()
-
-# -------------------------
-# API
-# -------------------------
+# -----------------------------------------------------------------------------
+# Routes
+# -----------------------------------------------------------------------------
 @app.get("/health")
 def health():
-    return {"ok": True, "app": APP_NAME}
+    return {"ok": True}
 
-# Registry (create or update a slug)
 @app.post("/api/qr/create")
-async def create_slug(payload: dict):
-    slug = (payload.get("slug") or "").strip()
-    target = (payload.get("target_url") or "").strip()
-    title = (payload.get("title") or "").strip()
-    if not slug or not target:
-        raise HTTPException(400, "slug and target_url are required")
-    upsert_slug(slug, target, title)
-    return {"ok": True, "slug": slug, "target_url": target}
+def api_create_slug(payload: CreateSlug = Body(...)):
+    if not payload.slug or not payload.target_url:
+        raise HTTPException(400, "slug and target_url required")
+    set_slug(payload.slug, payload.target_url, payload.palette)
+    return {"ok": True, "slug": payload.slug}
 
-# Mint batch (for bookkeeping)
-@app.post("/api/qr/mint")
-async def mint(payload: dict):
-    slug = (payload.get("slug") or "").strip()
-    qty = int(payload.get("qty") or 0)
-    if not slug or qty <= 0:
-        raise HTTPException(400, "slug and positive qty required")
-    con = _db()
-    con.execute("INSERT INTO mints(slug, qty, created_at) VALUES(?,?,?)", (slug, qty, int(time.time())))
-    con.commit(); con.close()
-    return {"ok": True, "slug": slug, "qty": qty}
+@app.get("/api/qr/slug/{slug}")
+def api_get_slug(slug: str):
+    target, palette = get_slug(slug)
+    return {"slug": slug, "target_url": target, "palette": palette or "neon"}
 
-# Claim a code (vague geo)
-@app.post("/api/qr/claim")
-async def claim(request: Request, payload: dict):
-    slug = (payload.get("slug") or "").strip()
-    if not slug:
-        raise HTTPException(400, "slug required")
-    # vague geo: round to ~1.1km (@ ~2 decimals) if provided
-    lat = payload.get("lat"); lon = payload.get("lon")
-    def _v(x): 
-        try: return round(float(x), 2)
-        except: return None
-    lat = _v(lat); lon = _v(lon)
-    ip = request.client.host if request.client else "0.0.0.0"
-    ua = request.headers.get("user-agent", "")
-    con = _db()
-    con.execute(
-        "INSERT INTO claims(slug, ip, ua, lat, lon, approx, created_at) VALUES(?,?,?,?,?,?,?)",
-        (slug, ip, ua, lat, lon, 1, int(time.time()))
-    )
-    con.commit(); con.close()
-    return {"ok": True, "slug": slug}
+# --- Image endpoints ----------------------------------------------------------
 
-# Claim stats
-@app.get("/api/qr/claims/{slug}")
-def claims(slug: str):
-    con = _db()
-    cur = con.execute("SELECT COUNT(*) as c FROM claims WHERE slug=?", (slug,))
-    total = cur.fetchone()["c"]
-    cur = con.execute("SELECT lat, lon, COUNT(*) c FROM claims WHERE slug=? AND lat IS NOT NULL AND lon IS NOT NULL GROUP BY lat,lon", (slug,))
-    clusters = [dict(r) for r in cur.fetchall()]
-    con.close()
-    return {"ok": True, "slug": slug, "total": total, "clusters": clusters}
-
-# Static record PNG
-@app.get("/api/qr/record/{slug}.png")
-def record_png(slug: str, size: int = Query(1024, ge=256, le=4096), palette: Optional[str]=Query(None)):
-    pal = _palette(palette)
-    img = compose_record_qr(slug, size, pal)
+@app.get("/api/qr/plain/{slug}.png")
+def plain_qr(slug: str,
+             size: int = Query(768, ge=128, le=4096),
+             palette: Optional[str] = Query(None)):
+    pal = _palette(palette or get_slug(slug)[1])
+    target, _ = get_slug(slug)
+    img = _qr_image(target, size, pal.qr_dark, pal.qr_light)
     return StreamingResponse(io.BytesIO(to_png_bytes(img)), media_type="image/png")
 
-# Animated record GIF (simple spin)
-@app.get("/api/qr/anim/{slug}.gif")
-def record_gif(slug: str, size: int = Query(768, ge=256, le=1024), frames: int = Query(24, ge=8, le=48), palette: Optional[str]=Query(None)):
-    pal = _palette(palette)
-    base = compose_record_qr(slug, size, pal)
-    seq = []
-    for i in range(frames):
-        deg = int((360/frames)*i)
-        seq.append(base.rotate(deg, resample=Image.BICUBIC, expand=False))
-    return StreamingResponse(io.BytesIO(to_gif_bytes(seq, duration_ms=60)), media_type="image/gif")
+@app.get("/api/qr/record/{slug}.png")
+def record_png(slug: str,
+               size: int = Query(1024, ge=512, le=4096),
+               palette: Optional[str] = Query(None)):
+    pal = _palette(palette or get_slug(slug)[1])
+    target, _ = get_slug(slug)
+    img = compose_record_qr(slug, size, pal, target)
+    return StreamingResponse(io.BytesIO(to_png_bytes(img)), media_type="image/png")
 
-# 12-up A4 sheet (PNG, 300 DPI suggested)
-@app.get("/api/qr/sheet_record.png")
-def sheet_png(
-    slugs: str = Query("mimi-01,cbo-01,ma-01,boss-01,jbo-01,tim-01,friend-01,other-01,mimi-02,cbo-02,ma-02,boss-02"),
-    dpi: int = Query(300, ge=150, le=600),
-    palette: Optional[str]=Query(None),
-):
-    pal = _palette(palette)
-    # A4 @300dpi = 3508 x 2480 (landscape or portrait). We'll do portrait (2480x3508).
+@app.get("/api/qr/record_label/{slug}.png")
+def record_with_label(slug: str,
+                      caption: str = Query("", max_length=64),
+                      size: int = Query(1200, ge=512, le=4096),
+                      palette: Optional[str] = Query(None)):
+    pal = _palette(palette or get_slug(slug)[1])
+    target, _ = get_slug(slug)
+    img = compose_record_qr(slug, size, pal, target)
+    if caption:
+        draw = ImageDraw.Draw(img)
+        y = int(size*0.9)
+        draw.text((size//2, y), caption, fill=pal.qr_light, anchor="mm")
+    return StreamingResponse(io.BytesIO(to_png_bytes(img)), media_type="image/png")
+
+@app.get("/api/qr/anim/{slug}.gif")
+def record_anim_gif(slug: str,
+                    size: int = Query(768, ge=512, le=2048),
+                    frames: int = Query(16, ge=8, le=48),
+                    fps: int = Query(10, ge=4, le=30),
+                    palette: Optional[str] = Query(None)):
+    """Simple spin: rotate grooves; keep QR static (so it still scans)."""
+    pal = _palette(palette or get_slug(slug)[1])
+    target, _ = get_slug(slug)
+
+    # Base without QR: draw record once
+    base = Image.new("RGBA", (size, size), pal.bg)
+    cx = cy = size // 2
+    radius = int(size*0.48)
+    draw = ImageDraw.Draw(base)
+    draw.ellipse((cx-radius, cy-radius, cx+radius, cy+radius), fill=pal.record_dark)
+    inner = int(radius*0.35)
+    # grooves layer to rotate
+    grooves = Image.new("RGBA", (size, size), (0,0,0,0))
+    gd = ImageDraw.Draw(grooves)
+    for r in range(inner, radius, 6):
+        col = (pal.record_light[0], pal.record_light[1], pal.record_light[2], 32)
+        gd.ellipse((cx-r, cy-r, cx+r, cy+ r), outline=col, width=1)
+
+    # label
+    lab_r = int(radius*0.42)
+    draw.ellipse((cx-lab_r, cy-lab_r, cx+lab_r, cy+lab_r), fill=pal.label)
+    hr = max(2, size//120)
+    draw.ellipse((cx-hr, cy-hr, cx+hr, cy+hr), fill=(0,0,0,180))
+
+    # static QR
+    qr_size = int(lab_r*1.5)
+    qr = _qr_image(target, qr_size, pal.qr_dark, pal.qr_light)
+
+    frames_list = []
+    for i in range(frames):
+        ang = 360.0 * (i/frames)
+        g_rot = grooves.rotate(ang, resample=Image.BICUBIC)
+        frame = base.copy()
+        frame.alpha_composite(g_rot)
+        frame.alpha_composite(qr, (cx-qr_size//2, cy-qr_size//2))
+        frame.alpha_composite(_grit_overlay(size, size, pal.grit))
+        frames_list.append(frame)
+
+    bio = io.BytesIO()
+    frames_list[0].save(
+        bio, format="GIF", save_all=True, append_images=frames_list[1:],
+        duration=int(1000/fps), loop=0, disposal=2)
+    return StreamingResponse(io.BytesIO(bio.getvalue()), media_type="image/gif")
+
+# --- Sheets -------------------------------------------------------------------
+
+def _grid_sheet(slugs: List[str], maker, dpi: int, pal: Palette) -> Image.Image:
+    # A4 portrait @ 300dpi
     W, H = 2480, 3508
     cols, rows = 3, 4
     margin = 80
@@ -308,17 +333,40 @@ def sheet_png(
     cell_h = (H - (rows+1)*margin)//rows
     size = min(cell_w, cell_h)
 
-    page = Image.new("RGBA", (W, H), pal["bg"])
-    items = [s.strip() for s in slugs.split(",") if s.strip()]
+    page = Image.new("RGBA", (W, H), pal.bg)
     idx = 0
     for r in range(rows):
         for c in range(cols):
-            if idx >= len(items): break
-            im = compose_record_qr(items[idx], size, pal)
+            if idx >= len(slugs): break
+            tile = maker(slugs[idx], size, pal)
             x = margin + c*(size+margin)
             y = margin + r*(size+margin)
-            page.alpha_composite(im, (x, y))
+            page.alpha_composite(tile, (x, y))
             idx += 1
+    return page
 
+def _make_plain(slug: str, size: int, pal: Palette) -> Image.Image:
+    target, _ = get_slug(slug)
+    return _qr_image(target, size, pal.qr_dark, pal.qr_light)
+
+def _make_record(slug: str, size: int, pal: Palette) -> Image.Image:
+    target, _ = get_slug(slug)
+    return compose_record_qr(slug, size, pal, target)
+
+@app.get("/api/qr/sheet_plain.png")
+def sheet_plain(slugs: str = Query("mimi-01,cbo-01,ma-01,boss-01,jbo-01,tim-01,friend-01,other-01,mimi-02,cbo-02,ma-02,boss-02"),
+                dpi: int = Query(300, ge=150, le=600),
+                palette: Optional[str] = Query(None)):
+    pal = _palette(palette)
+    items = [s.strip() for s in slugs.split(",") if s.strip()]
+    page = _grid_sheet(items, _make_plain, dpi, pal)
     return StreamingResponse(io.BytesIO(to_png_bytes(page, dpi=dpi)), media_type="image/png")
-    
+
+@app.get("/api/qr/sheet_record.png")
+def sheet_record(slugs: str = Query("mimi-01,cbo-01,ma-01,boss-01,jbo-01,tim-01,friend-01,other-01,mimi-02,cbo-02,ma-02,boss-02"),
+                 dpi: int = Query(300, ge=150, le=600),
+                 palette: Optional[str] = Query(None)):
+    pal = _palette(palette)
+    items = [s.strip() for s in slugs.split(",") if s.strip()]
+    page = _grid_sheet(items, _make_record, dpi, pal)
+    return StreamingResponse(io.BytesIO(to_png_bytes(page, dpi=dpi)), media_type="image/png")
