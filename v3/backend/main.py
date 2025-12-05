@@ -1,14 +1,15 @@
-  v3/backend/main.py
-  CrateJuice QR backend — reference baseline (FastAPI)
-Endpoints:
-   GET  /health
-  POST /api/qr/create                     {"slug": "...", "target_url": "...", "palette": "neon"}
-  GET  /api/qr/slug/{slug}
-  GET  /api/qr/plain/{slug}.png
-  GET  /api/qr/record/{slug}.png
-   GET  /api/qr/record_label/{slug}.png    ?caption=Hello
- GET  /api/qr/anim/{slug}.gif  GET  /api/qr/sheet_plain.png            ?slugs=a,b,c...&dpi=300
-  GET  /api/qr/sheet_record.png           ?slugs=...&dpi=300
+# v3/backend/main.py
+# CrateJuice QR backend — reference baseline (FastAPI)
+# Endpoints:
+#   GET  /health
+#   POST /api/qr/create                     {"slug": "...", "target_url": "...", "palette": "neon"}
+#   GET  /api/qr/slug/{slug}
+#   GET  /api/qr/plain/{slug}.png
+#   GET  /api/qr/record/{slug}.png
+#   GET  /api/qr/record_label/{slug}.png    ?caption=Hello
+#   GET  /api/qr/anim/{slug}.gif
+#   GET  /api/qr/sheet_plain.png            ?slugs=a,b,c...&dpi=300
+#   GET  /api/qr/sheet_record.png           ?slugs=...&dpi=300
 
 import io, os, math, sqlite3
 from typing import Optional, List, Tuple
@@ -370,3 +371,4 @@ def sheet_record(slugs: str = Query("mimi-01,cbo-01,ma-01,boss-01,jbo-01,tim-01,
     items = [s.strip() for s in slugs.split(",") if s.strip()]
     page = _grid_sheet(items, _make_record, dpi, pal)
     return StreamingResponse(io.BytesIO(to_png_bytes(page, dpi=dpi)), media_type="image/png")
+                   
