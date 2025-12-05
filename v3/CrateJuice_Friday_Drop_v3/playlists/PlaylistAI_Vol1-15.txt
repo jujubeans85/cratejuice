@@ -1,0 +1,4 @@
+PlaylistAI Anthology (Vol. 1–15)
+--------------------------------
+Paste new rows into the CSV with: volume,title,artist,url
+This TXT is just a human summary.
