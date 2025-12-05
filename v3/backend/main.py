@@ -1,39 +1,19 @@
-import os
-import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="CrateJuice v3 API")
+app = FastAPI()
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
-
+# CORS is already set, but keep this pattern if you edit:
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_ORIGIN],
-    allow_credentials=True,
+    allow_origins=["*"],  # or lock to your Netlify domains later
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/")
 def root():
-    return {"crate": "juice", "status": "spinning"}
-
-@app.get("/health")
-def health():
-    return {"ok": True}
-
-@app.get("/status")
-def status():
-    return {
-        "crate": "juice",
-        "status": "spinning",
-        "git_sha": os.getenv("GIT_SHA", ""),
-        "started_at": os.getenv("STARTED_AT", ""),
-        "time": int(time.time()),
-    }
-from fastapi import FastAPI
-app = FastAPI()
+    return {"ok": True, "service": "cratejuice-backend", "routes": ["/health"]}
 
 @app.get("/health")
 def health():
