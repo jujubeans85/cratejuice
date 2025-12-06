@@ -5,6 +5,23 @@ services:
     region: oregon
     plan: free
     buildCommand: pip install -r requirements.txt
+    # Use gunicorn with Uvicorn worker for ASGI compatibility
+    startCommand: gunicorn main:app --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://rococo-syrniki-9fc4e3.netlify.app
+services:
+  - type: web
+    name: cratejuice-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
     healthCheckPath: /api/health
     envVars:
@@ -14,3 +31,19 @@ services:
         value: production
       - key: FRONTEND_URL
         value: https://rococo-syrniki-9fc4e3.netlify.app
+    services:
+      - type: web
+        name: cratejuice-backend
+        env: python
+        region: oregon
+        plan: free
+        buildCommand: pip install -r requirements.txt
+        startCommand: gunicorn main:app --bind 0.0.0.0:$PORT
+        healthCheckPath: /api/health
+        envVars:
+          - key: PYTHON_VERSION
+            value: 3.11.0
+          - key: FLASK_ENV
+            value: production
+          - key: FRONTEND_URL
+            value: https://rococo-syrniki-9fc4e3.netlify.app
