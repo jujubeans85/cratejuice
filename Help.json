@@ -1,0 +1,142 @@
+{
+  "version": "portrait_map_v3_audio_filenames",
+  "filenames": {
+    "stax_bday_01": "stax_bday_01.jpg",
+    "cathedral_bell_01": "cathedral_bell_01.jpg",
+    "bathroom_died_alone_01": "bathroom_died_alone_01.jpg",
+    "perspective_juice_01": "perspective_juice_01.jpg",
+    "rose_stop_smell_01": "rose_stop_smell_01.jpg",
+    "chlo_angel_light_01": "chlo_angel_light_01.jpg",
+    "mum_sand_dress_01": "mum_sand_dress_01.jpg",
+    "adam_green_glitch_01": "adam_green_glitch_01.jpg",
+    "mum_christmas_gold_01": "mum_christmas_gold_01.jpg",
+    "mimi_xmas_headphones_01": "mimi_xmas_headphones_01.jpg",
+    "dad_n_girls_01": "dad_n_girls_01.jpg",
+    "mimi_ma_neon_21st_01": "mimi_ma_neon_21st_01.jpg",
+    "stemz_gemz_01": "stemz_gemz_01.jpg",
+    "real_dawes_01": "real_dawes_01.jpg",
+    "dogs_turquoise_01": "dogs_turquoise_01.jpg",
+    "plur_block_01": "plur_block_01.jpg",
+    "juice_tag_01": "juice_tag_01.jpg",
+    "crate_juice_icon_01": "crate_juice_icon_01.jpg",
+    "letfishfuck_banner_01": "letfishfuck_banner_01.jpg",
+    "yakalla_roof_01": "yakalla_roof_01.jpg",
+    "young_profile_green_01": "young_profile_green_01.jpg",
+    "bare_bones_01": "bare_bones_01.jpg",
+    "crate_rec_sauce_01": "crate_rec_sauce_01.jpg",
+    "smile_flare_01": "smile_flare_01.jpg",
+    "billie_poster_room_01": "billie_poster_room_01.jpg",
+    "yakalla_title_flame_02": "yakalla_title_flame_02.jpg",
+    "girl_window_overlay_01": "girl_window_overlay_01.jpg"
+  },
+  "audio_map": {
+    "stax_bday_01": {
+      "playlist_hook": "STAX-BDAY-CHAOS-LOOP",
+      "track_seed": "Lizzo – Juice"
+    },
+    "cathedral_bell_01": {
+      "playlist_hook": "CATHEDRAL-OPEN",
+      "track_seed": "Brian Eno – An Ending (Ascent)"
+    },
+    "bathroom_died_alone_01": {
+      "playlist_hook": "TRAGIC-FUNNY-LOO",
+      "track_seed": "The Specials – Ghost Town"
+    },
+    "perspective_juice_01": {
+      "playlist_hook": "ZOOM-OUT-REFRAME",
+      "track_seed": "Massive Attack – Teardrop"
+    },
+    "rose_stop_smell_01": {
+      "playlist_hook": "MICRO-PAUSE-GRATITUDE",
+      "track_seed": "Bon Iver – Holocene"
+    },
+    "chlo_angel_light_01": {
+      "playlist_hook": "CHLO-GLow-CORE",
+      "track_seed": "MUNA – Silk Chiffon"
+    },
+    "mum_sand_dress_01": {
+      "playlist_hook": "MA-BEACH-MEMORY",
+      "track_seed": "(Sittin' On) The Dock of the Bay – Otis Redding"
+    },
+    "adam_green_glitch_01": {
+      "playlist_hook": "JUICE-SELF-GLITCH",
+      "track_seed": "Daft Punk – Technologic"
+    },
+    "mum_christmas_gold_01": {
+      "playlist_hook": "XMAS-MA-GOLDEN",
+      "track_seed": "Darlene Love – Christmas (Baby Please Come Home)"
+    },
+    "mimi_xmas_headphones_01": {
+      "playlist_hook": "MIMI-XMAS-LOOPS",
+      "track_seed": "Pomplamoose – Wake Me Up Before You Go-Go (cover)"
+    },
+    "dad_n_girls_01": {
+      "playlist_hook": "DAD-N-GIRLS-SATURDAY",
+      "track_seed": "Paul Simon – You Can Call Me Al"
+    },
+    "mimi_ma_neon_21st_01": {
+      "playlist_hook": "21ST-NEON-FAM",
+      "track_seed": "Robyn – Dancing On My Own"
+    },
+    "stemz_gemz_01": {
+      "playlist_hook": "STEM-DICE-RUN",
+      "track_seed": "Caribou – Odessa"
+    },
+    "real_dawes_01": {
+      "playlist_hook": "CREW-ROLL-CALL",
+      "track_seed": "The War On Drugs – Red Eyes"
+    },
+    "dogs_turquoise_01": {
+      "playlist_hook": "MOOSH-GUARD-DOGS",
+      "track_seed": "TV On The Radio – Wolf Like Me"
+    },
+    "plur_block_01": {
+      "playlist_hook": "PLUR-CREST-ANTHEM",
+      "track_seed": "Underworld – Born Slippy (Nuxx)"
+    },
+    "juice_tag_01": {
+      "playlist_hook": "JUICE-BRAG-MODE",
+      "track_seed": "Run The Jewels – Legend Has It"
+    },
+    "crate_juice_icon_01": {
+      "playlist_hook": "SONIC-POSTCARD-ROOT",
+      "track_seed": "The Avalanches – Because I'm Me"
+    },
+    "letfishfuck_banner_01": {
+      "playlist_hook": "LFF-LATE-NIGHT",
+      "track_seed": "Flume – High Beams"
+    },
+    "yakalla_roof_01": {
+      "playlist_hook": "YAKALLA-ORIGIN",
+      "track_seed": "The Go-Betweens – Streets of Your Town"
+    },
+    "young_profile_green_01": {
+      "playlist_hook": "KID-QUIET-TIME",
+      "track_seed": "Angus & Julia Stone – Big Jet Plane"
+    },
+    "bare_bones_01": {
+      "playlist_hook": "BARE-BONES-ROOTS",
+      "track_seed": "Bruce Springsteen – The River"
+    },
+    "crate_rec_sauce_01": {
+      "playlist_hook": "STUDIO-REC-SESSION",
+      "track_seed": "Anderson .Paak – Come Down"
+    },
+    "smile_flare_01": {
+      "playlist_hook": "HYPER-SMILE-ALERT",
+      "track_seed": "Yeah Yeah Yeahs – Heads Will Roll (A-Trak Remix)"
+    },
+    "billie_poster_room_01": {
+      "playlist_hook": "BEDROOM-POSTER-ERA",
+      "track_seed": "Billie Eilish – bad guy"
+    },
+    "yakalla_title_flame_02": {
+      "playlist_hook": "YAKALLA-POWER-OUT",
+      "track_seed": "Arcade Fire – Neighborhood #3 (Power Out)"
+    },
+    "girl_window_overlay_01": {
+      "playlist_hook": "WINDOW-WONDER",
+      "track_seed": "The xx – Intro"
+    }
+  }
+}
